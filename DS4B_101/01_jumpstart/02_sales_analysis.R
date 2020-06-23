@@ -26,14 +26,28 @@ orderlines_tbl <- read_excel(path = "business_science/DS4B_101/00_data/bike_sale
 
 # 3.0 Examining Data ----
 
-
-
+bikes_tbl
+glimpse(bikes_tbl)
+bikeshops_tbl
+orderlines_tbl
 
 
 # 4.0 Joining Data ----
 
+?left_join
 
+orderlines_tbl
+bikes_tbl
+left_join(orderlines_tbl, bikes_tbl, by = c("product.id" = "bike.id"))
 
+# join more than two tables
+bike_orderlines_joined_tbl <- orderlines_tbl %>%
+    left_join(bikes_tbl, by = c("product.id" = "bike.id")) %>%
+    left_join(bikeshops_tbl, by = c("customer.id" = "bikeshop.id"))
+
+bike_orderlines_joined_tbl
+
+bike_orderlines_joined_tbl %>% glimpse()
 
 # 5.0 Wrangling Data ----
 
