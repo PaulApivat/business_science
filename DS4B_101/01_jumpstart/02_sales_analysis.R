@@ -18,10 +18,11 @@ library(writexl)
 
 
 # 2.0 Importing Files ----
+bikes_tbl <- read_excel(path = "business_science/DS4B_101/00_data/bike_sales/data_raw/bikes.xlsx")
 
+bikeshops_tbl <- read_excel(path = "business_science/DS4B_101/00_data/bike_sales/data_raw/bikeshops.xlsx")
 
-
-
+orderlines_tbl <- read_excel(path = "business_science/DS4B_101/00_data/bike_sales/data_raw/orderlines.xlsx")
 
 # 3.0 Examining Data ----
 
