@@ -56,7 +56,7 @@ bike_orderlines_joined_tbl %>% glimpse()
 # "location" column in bike_orderlines_joined_tbl has city, state (multiple descriptors)
 # we want one descriptor per cell
 
-bike_orderlines_joined_tbl %>%
+bike_orderlines_wrangled_tbl <- bike_orderlines_joined_tbl %>%
     # separate description into cateogory.1, category.2, frame.material
     separate(col = description, 
              into = c('category.1', 'category.2', 'frame.material'),
@@ -89,9 +89,9 @@ bike_orderlines_joined_tbl %>%
     # str_replace_all uses regex to replace a pattern
     # replace all . with underscore _  use regex \\ to escape because dot is special character
     rename(order_date = order.date) %>%
-    set_names(names(.) %>% str_replace_all("\\.", "_")) %>%
-    glimpse()
+    set_names(names(.) %>% str_replace_all("\\.", "_")) 
 
+bike_orderlines_wrangled_tbl %>% glimpse()
 
 # 6.0 Business Insights ----
 
