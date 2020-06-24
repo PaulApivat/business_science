@@ -75,6 +75,9 @@ bike_orderlines_joined_tbl %>%
     # Reorganize (remove specific columns); negative means select 'out'
     select(-...1, -location) %>%
     select(-ends_with(".id")) %>%
+    # get order.id column back with bind_cols
+    # go back to bike_orderlines_joined_tbl and select order.id to bind back
+    bind_cols(bike_orderlines_joined_tbl %>% select(order.id)) %>%
     
     glimpse()
 
