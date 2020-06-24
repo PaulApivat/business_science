@@ -84,6 +84,12 @@ bike_orderlines_joined_tbl %>%
            quantity, price, total.price,
            everything()) %>%
     
+    # Renaming columns: one at a time or multiple columns
+    # dot in names(.) helps pass all column names of in-coming tibble
+    # str_replace_all uses regex to replace a pattern
+    # replace all . with underscore _  use regex \\ to escape because dot is special character
+    rename(order_date = order.date) %>%
+    set_names(names(.) %>% str_replace_all("\\.", "_")) %>%
     glimpse()
 
 
