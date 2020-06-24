@@ -14,7 +14,8 @@ library(tidyquant)
 library(readxl)
 library(writexl)
 
-
+# note: set directory
+setwd("/Users/paulapivat/Desktop/RCode")
 
 
 # 2.0 Importing Files ----
