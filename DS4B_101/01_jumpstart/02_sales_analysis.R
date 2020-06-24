@@ -69,6 +69,13 @@ bike_orderlines_joined_tbl %>%
              sep = ", ",
              remove = FALSE) %>%
     
+    # price extended (quantity x unit price)
+    mutate(total.price = price * quantity) %>%
+    
+    # Reorganize (remove specific columns); negative means select 'out'
+    select(-...1, -location) %>%
+    select(-ends_with(".id")) %>%
+    
     glimpse()
 
 
