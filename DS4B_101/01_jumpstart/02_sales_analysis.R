@@ -79,6 +79,11 @@ bike_orderlines_joined_tbl %>%
     # go back to bike_orderlines_joined_tbl and select order.id to bind back
     bind_cols(bike_orderlines_joined_tbl %>% select(order.id)) %>%
     
+    # Reorder columns with select_helpers contains, everything
+    select(contains('date'), contains('id'), contains('order'),
+           quantity, price, total.price,
+           everything()) %>%
+    
     glimpse()
 
 
