@@ -52,8 +52,24 @@ bike_orderlines_joined_tbl %>% glimpse()
 
 # 5.0 Wrangling Data ----
 
+# motivation to wrangle "description" column in bike_orderlines_joined_tbl has multiple descriptions
+# "location" column in bike_orderlines_joined_tbl has city, state (multiple descriptors)
+# we want one descriptor per cell
 
+bike_orderlines_joined_tbl %>%
+    # separate description into cateogory.1, category.2, frame.material
+    separate(col = description, 
+             into = c('category.1', 'category.2', 'frame.material'),
+             sep = " - ",
+             remove = TRUE) %>%
 
+    # separate location into city and state
+    separate(col = location,
+             into = c('city', 'state'),
+             sep = ", ",
+             remove = FALSE) %>%
+    
+    glimpse()
 
 
 # 6.0 Business Insights ----
