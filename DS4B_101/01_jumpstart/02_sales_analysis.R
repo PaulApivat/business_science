@@ -122,6 +122,22 @@ sales_by_year_tbl
 
 # Step 2 - Visualize
 
+sales_by_year_tbl %>%
+    # setup canvas with year on x-axis and sales on y-axi
+    ggplot(aes(x = year, y = sales)) + 
+    # Geometries
+    geom_col(fill = "#2C3E50") +
+    geom_label(aes(label = sales_text)) +
+    geom_smooth(method = 'lm', se = FALSE) +
+    # formatting
+    theme_tq() +
+    scale_y_continuous(labels = scales::dollar) +
+    labs(
+        title = "Revenue by Year",
+        subtitle = "Upward trend",
+        x = "",
+        y = "Revenue"
+    )
 
 
 # 6.2 Sales by Year and Category 2 ----
