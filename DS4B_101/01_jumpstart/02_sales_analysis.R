@@ -100,8 +100,25 @@ bike_orderlines_wrangled_tbl %>% glimpse()
 
 # Step 1 - Manipulate
 
+# Matt's method uses select() and mutate() before group()
+# bike_orderlines_wrangled_tbl %>% group_by(order_date) %>% summarise(total_sales = sum(total_price))
 
 
+sales_by_year_tbl <- bike_orderlines_wrangled_tbl %>%
+    # select columns to focus on and add a 'year' column
+    select(order_date, total_price) %>%
+    # use lubridate package function year() to gather the year from order_date
+    mutate(year = year(order_date)) %>%
+    
+    # group by year and summarize sales
+    group_by(year) %>%
+    summarize(sales = sum(total_price)) %>%
+    ungroup() %>%
+    
+    # format $ Format Text use scales::dollar() function
+    mutate(sales_text = scales::dollar(sales))
+
+sales_by_year_tbl
 
 # Step 2 - Visualize
 
