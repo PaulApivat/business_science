@@ -145,11 +145,44 @@ sales_by_year_tbl %>%
 
 # Step 1 - Manipulate
 
+sales_by_year_cat_2_tbl <- bike_orderlines_wrangled_tbl %>%
+    # select columns and add year column (add product category)
+    select(order_date, total_price, category_2) %>%
+    mutate(year = year(order_date)) %>%
+    # groupby and summarize by year and category
+    group_by(year, category_2) %>%
+    summarize(sales = sum(total_price)) %>%
+    ungroup() %>%
+    
+    # format $ text
+    mutate(sales_text = scales::dollar(sales))
 
+sales_by_year_cat_2_tbl
 
 
 # Step 2 - Visualize
 
+sales_by_year_cat_2_tbl %>%
+    # setup x and y axis, fill argument
+    ggplot(aes(x = year, y = sales, fill = category_2)) +
+    # add geometries
+    geom_col() +
+    geom_smooth(method = 'lm', se = FALSE) +
+    # facet by categories
+    # facet_wrap(~category_2, ncol = 3, scales = "free_y")
+    facet_wrap(~category_2, ncol = 3, scales = 'free_y') +
+    
+    # formatting
+    theme_tq() +
+    scale_fill_tq() +
+    scale_y_continuous(labels = scales::dollar) +
+    labs(
+        title = "Revenue by Year and Category 2",
+        subtitle = "Each product category has an upward trend",
+        x = "",
+        y = "Revenue",
+        fill = "Product Secondary Category"
+    )
 
 
 
