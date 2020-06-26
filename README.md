@@ -44,4 +44,26 @@ separate(col = multi-cat_column,
         sep = ' - ',
         remove = TRUE)
 ````
+- remove columns with `select(-column)`
+- use select helpers `select(ends_with(".id"))`, `select(contains('date'))`, `select(everything())`
+- `bind_cols()` to select a column from another data.frame
+- use dot (.) helper to enable passing incoming tibble to multiple spots in the function
+- use `ungroup()` at the end of a chain of pipes with `group_by()`
+- use `facet_wrap(~category, nrow = 3, ncol = 3, scales = 'free_y')`
 
+### Workflow
+
+- coding style the recognize data.frame requires manipulation before visualization
+- practice chaining 7-9 `%>%` then highlighting successive portions to run with `ctrl` + `enter`
+````
+more popular:
+
+df %>% 
+    ggplot(aes())
+
+than:
+
+ggplot(df, aes())
+````
+- Data Processing Pipeline (TBD)
+- Data Cleaning **most important**
