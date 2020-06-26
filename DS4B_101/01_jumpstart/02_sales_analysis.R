@@ -188,11 +188,33 @@ sales_by_year_cat_2_tbl %>%
 
 # 7.0 Writing Files ----
 
+# save data in different formats using fs package (use tab)
+# cleaned data is MOST important
+fs::dir_create("business_science/DS4B_101/00_data/bike_sales/data_wrangled_student")
+
 
 # 7.1 Excel ----
+# tip: good for business intelligence analyst who only use excel
 
+# use tab to navigate directory
+bike_orderlines_wrangled_tbl %>%
+    write_xlsx("business_science/DS4B_101/00_data/bike_sales/data_wrangled_student/bike_orderlines.xlsx")
 
 # 7.2 CSV ----
+# tip: good for others who use programming languages - python etc.
+
+# use tab to navigate directory
+bike_orderlines_wrangled_tbl %>%
+    write_csv("business_science/DS4B_101/00_data/bike_sales/data_wrangled_student/bike_orderlines.csv")
 
 
 # 7.3 RDS ----
+# tip: use RDS to save ANY object (models, plots), preserves object structure (unlike csv or excel)
+# native to R, much faster than loading csv
+
+bike_orderlines_wrangled_tbl %>%
+    write_rds("business_science/DS4B_101/00_data/bike_sales/data_wrangled_student/bike_orderlines.rds")
+
+
+
+
