@@ -50,6 +50,7 @@ separate(col = multi-cat_column,
 - use dot (.) helper to enable passing incoming tibble to multiple spots in the function
 - use `ungroup()` at the end of a chain of pipes with `group_by()`
 - use `facet_wrap(~category, nrow = 3, ncol = 3, scales = 'free_y')`
+- overlay `geom_smooth(method = 'lm', se = FALSE)` over `geom_col()` to show trendlines
 
 ### Workflow
 
@@ -67,3 +68,15 @@ ggplot(df, aes())
 ````
 - Data Processing Pipeline (TBD)
 - Data Cleaning **most important**
+- Write important data.frames to multiple formats for enhanced collaboration:
+- save work in `rds` format for any object (models, plots) preserve object structure (unlike xlsx or csv)
+- `rds` native to R, much faster loading than csv
+
+````
+# create directories
+fs::dir_create("")
+
+write_xlsx()
+write_csv()
+write_rds()
+````
