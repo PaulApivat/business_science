@@ -60,6 +60,25 @@ matches
 num_range
 everything()
 
+# Pull
+
+# If you want the average of a column of numbers
+# mean() returns NA because it's expecting a numeric vector, not a tibble
+bike_orderlines_tbl %>%
+    select(total_price) %>% 
+    mean()
+
+# use pull() instead select() to pull out numbers from column into numeric vector
+bike_orderlines_tbl %>%
+    #select(total_price) %>%
+    pull(total_price) %>%
+    mean()
+
+# pull() vs select()
+bike_orderlines_tbl %>%
+    pull(model)
+    #select(model)
+
 # 2.0 Arranging with arrange() and desc() ----
 
 
