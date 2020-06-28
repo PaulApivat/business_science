@@ -37,12 +37,19 @@ read_csv("../00_data/bike_sales/data_wrangled/bike_orderlines.csv",
 
 # 2.2 RDS ----
 
+bike_orders_rds_tbl <- readr::read_rds("../00_data/bike_sales/data_wrangled/bike_orderlines.rds")
 
-
+bike_orders_rds_tbl %>% 
+    slice(7916)
 
 # 3.0 Excel ----
 
+bike_orders_excel_tbl <- readxl::read_excel("../00_data/bike_sales/data_wrangled/bike_orderlines.xlsx", sheet = "Sheet1")
 
+# know what sheets are in excel file and pick specific sheets
+readxl::excel_sheets("../00_data/bike_sales/data_wrangled/bike_orderlines.xlsx")
+
+bike_orders_excel_tbl
 
 
 # 4.0 Databases  ----
