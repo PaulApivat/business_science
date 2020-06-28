@@ -17,9 +17,48 @@ bike_orderlines_tbl %>% glimpse()
 
 # 1.0 Selecting Columns with select() ----
 
+# Why select? 
+# 1. To Remove Columns or 
+# 2. Re-arrange Order of Columns
 
+# Three different ways to select the first three columns in bike_orderlines_tbl
 
+# select column names
+bike_orderlines_tbl %>% 
+    select(order_date, order_id, order_line)
 
+# select by numeric vector of column positions
+bike_orderlines_tbl %>% 
+    select(1:3)
+
+# select helpers
+bike_orderlines_tbl %>%
+    select(starts_with("order_"))
+
+# Resuce Columns
+
+bike_orderlines_tbl %>% 
+    select(order_date, total_price, category_1, category_2)
+
+# Re-arrange Columns
+
+bike_orderlines_tbl %>%
+    select(bikeshop_name:state, everything())
+
+# Select helpers
+?starts_with
+
+# use contains, ends_with and start_with
+bike_orderlines_tbl %>%
+    select(contains("price"))
+
+# Select variables that match a pattern
+starts_with
+ends_with
+contains
+matches
+num_range
+everything()
 
 # 2.0 Arranging with arrange() and desc() ----
 
