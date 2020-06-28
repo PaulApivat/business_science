@@ -54,4 +54,24 @@ bike_orders_excel_tbl
 
 # 4.0 Databases  ----
 
+# establish a connection object
+con <- RSQLite::dbConnect(drv = SQLite(), dbname = "../00_data/chinook/Chinook_Sqlite.sqlite")
+
+#return names of tables in the database
+dbListTables(con)
+
+# examine a table from a database (NOT pulled into memory)
+tbl(con, "Album")
+
+# pull table from data base into local memory
+tbl(con, "Album") %>%
+    collect()
+
+# save so it shows up in global enviroment
+album_tbl <- tbl(con, "Album") %>% collect()
+
+# how to disconnect from a database (best practice)
+artist_tbl <- tbl(con, "Artist") %>% collect()
+
+dbDisconnect(con)
 
