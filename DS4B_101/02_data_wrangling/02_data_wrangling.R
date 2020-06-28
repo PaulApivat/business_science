@@ -101,7 +101,12 @@ bike_orderlines_tbl %>%
 
 # 2.0 Arranging with arrange() and desc() ----
 
-
+bikes_tbl %>%
+    select(model, price) %>%
+    # by default, arrange goes from lowest to highest
+    # use desc() for highest to lowest
+    arrange(desc(price)) %>% 
+    view()
 
 
 
