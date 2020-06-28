@@ -79,6 +79,26 @@ bike_orderlines_tbl %>%
     pull(model)
     #select(model)
 
+# select_if()
+?select_if
+
+# select if column contains character data-type
+# note: use is.character, without parentheses is.character()
+bike_orderlines_tbl %>%
+    select_if(is.character)
+
+# select if numeric
+bike_orderlines_tbl %>%
+    select_if(is.numeric)
+
+# alternative way using tilde
+bike_orderlines_tbl %>%
+    select_if(~ is.numeric(.))
+
+# select if NOT numeric (must use tilde)
+bike_orderlines_tbl %>%
+    select_if(~ !is.numeric(.))
+
 # 2.0 Arranging with arrange() and desc() ----
 
 
