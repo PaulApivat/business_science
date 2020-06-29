@@ -158,12 +158,50 @@ Hint - Use summarized sales values and `spread()` to identify gaps in frame mate
 - Rename all Columns: Primary Category, Secondary Category, Aluminum, Carbon, Total Sales
 
 ```{r}
+bike_orderlines_tbl2 <- bike_orderlines_tbl %>%
+    select(category_1, category_2, frame_material, total_price) %>%
+    group_by(category_1, category_2, frame_material) %>%
+    summarize(Sales = sum(total_price)) %>%
+    ungroup() %>%
+    spread(key = frame_material, value = Sales)
 
+bike_orderlines_tbl2$Aluminum <- ifelse(is.na(bike_orderlines_tbl2$Aluminum), 0, bike_orderlines_tbl2$Aluminum)
 
+bike_orderlines_tbl2$Carbon <- ifelse(is.na(bike_orderlines_tbl2$Carbon), 0, bike_orderlines_tbl2$Carbon)
 
+bike_orderlines_tbl2 <- bike_orderlines_tbl2 %>%
+    mutate(total_sales = Aluminum + Carbon) %>%
+    mutate(total_sales = scales::dollar(total_sales)) %>%
+    set_names(c("Primary Category", "Secondary Category", "Aluminum", "Carbon", "Total Sales"))
+
+head(bike_orderlines_tbl2)
+    
 ```
 
+Answer: Not all combinations of primary/secondary bike category contain both Aluminum and Carbon frame.
+The following Category_2 models do not contain both: Over Mountain, Triathlon, Cyclocross 
 
-
+```{r}
+bike_orderlines_tbl %>%
+    select(category_1, category_2, frame_material, total_price) %>%
+    group_by(category_1, category_2, frame_material) %>%
+    summarize(Sales = sum(total_price)) %>%
+    ungroup() %>%
+    spread(key = frame_material, value = Sales) %>%
+    replace_na(list(Aluminum = 0, Carbon = 0)) %>%
+    mutate(total_sales = Aluminum + Carbon) %>%
+    arrange(desc(total_sales)) %>%
+    mutate(
+        Aluminum = scales::dollar(Aluminum),
+        Carbon = scales::dollar(Carbon),
+        total_sales = scales::dollar(total_sales)
+    ) %>%
+    rename(
+        `Primary Category` = category_1,
+        `Secondary Category` = category_2,
+        `Total Sales` = total_sales
+    )
+    
+```
 
 
