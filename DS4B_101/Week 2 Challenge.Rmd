@@ -188,6 +188,7 @@ bike_orderlines_tbl %>%
     summarize(Sales = sum(total_price)) %>%
     ungroup() %>%
     spread(key = frame_material, value = Sales) %>%
+    # efficient way to find NA and replace with 0
     replace_na(list(Aluminum = 0, Carbon = 0)) %>%
     mutate(total_sales = Aluminum + Carbon) %>%
     arrange(desc(total_sales)) %>%
