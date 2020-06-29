@@ -218,9 +218,9 @@ bike_orderlines_prices %>%
     mutate(total_price_log = log(total_price)) %>%
     mutate(total_price_sqrt = total_price^0.5)
 
+
 # Adding Flag (Binary Feature - True or False)
 # An example of Feature Engineering - developing features based on knowledge of important aspect of data
-
 bike_orderlines_prices %>%
     # feature eng of is_supersix column
     mutate(is_supersix = model %>% 
@@ -229,6 +229,7 @@ bike_orderlines_prices %>%
     # filter based on new feature
                          filter(is_supersix)
 
+
 # Binning with ntile()
 # useful for grouping into cohorts and detecting relationships within continuous variables
 
@@ -236,6 +237,38 @@ bike_orderlines_prices %>%
     # placing prices in High, Medium, Low bins - wow
     mutate(total_price_binned = ntile(total_price, 3))
 
+
+# If-Then Statement statements inside mutate()
+# case_when() - more flexible binning
+
+# numeric to categorical using case_when()
+bike_orderlines_prices %>%
+    mutate(total_price_binned = ntile(total_price, 3)) %>%
+    mutate(total_price_binned2 = case_when(
+        # anything greater than 66th percentile (highest 3rd Bin)
+        total_price > quantile(total_price, 0.66) ~ "High",
+        total_price > quantile(total_price, 0.33) ~ "Medium",
+        TRUE ~ "Low"
+    ))
+
+# Numeric to Categorical
+# case_when() allows flexible adjustment of criteria for interquartile range
+bike_orderlines_prices %>%
+    mutate(total_price_binned = ntile(total_price, 3)) %>%
+    mutate(total_price_binned2 = case_when(
+        # anything greater than 75th percentile (some bin 3 are 'medium')
+        total_price > quantile(total_price, 0.75) ~ "High",
+        total_price > quantile(total_price, 0.25) ~ "Medium",
+        TRUE ~ "Low"
+    ))
+
+# Text to Categorical (create categories)
+bike_orderlines_prices %>%
+    mutate(bike_type = case_when(
+        model %>% str_to_lower() %>% str_detect("supersix") ~ "Supersix",
+        model %>% str_to_lower() %>% str_detect("jekyll") ~ "Jekyll",
+        TRUE ~ "Not Supersix or Jekyll"
+    ))
 
 
 # 5.0 Grouping & Summarizing with group_by() and summarize() ----
