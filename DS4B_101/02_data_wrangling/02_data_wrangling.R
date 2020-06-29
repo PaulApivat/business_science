@@ -273,6 +273,36 @@ bike_orderlines_prices %>%
 
 # 5.0 Grouping & Summarizing with group_by() and summarize() ----
 
+# most cleaned data is very granular, need to Aggregate data to seed Trends
+# the heart of working with TRANSACTIONAL data
+# Typical aggregations: by order, by year, by product category, by customer
+
+bike_orderlines_tbl %>%
+    summarize(
+        revenue = sum(total_price)
+    )
+
+bike_orderlines_tbl %>%
+    group_by(category_1) %>%
+    summarize(revenue = sum(total_price))
+
+# find total revenue by category_1 and 2 in descending order
+bike_orderlines_tbl %>%
+    group_by(category_1, category_2) %>%
+    summarize(revenue = sum(total_price)) %>%
+    # always ungroup() after summarize(); prevent hard-to-detect errors
+    ungroup() %>%
+    arrange(desc(revenue))
+
+# business insights: see which combination of category 1 and 2 and frame material
+# is highest revenue generator
+bike_orderlines_tbl %>%
+    group_by(category_1, category_2, frame_material) %>%
+    summarize(revenue = sum(total_price)) %>%
+    # always ungroup() after summarize(); prevent hard-to-detect errors
+    ungroup() %>%
+    arrange(desc(revenue))
+
 
 
 
