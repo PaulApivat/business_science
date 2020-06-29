@@ -471,7 +471,30 @@ test_tbl
 train_tbl %>%
     bind_rows(test_tbl)
     
+# 10.0 Separate and Unite ----
+
+bike_orderlines_tbl %>%
+    select(order_date) %>%
+    mutate(order_date = as.character(order_date)) %>%
     
+    # separate
+    separate(col = order_date, into = c("year", "month", "day"), sep = "-", remove = FALSE) %>%
+    # change year, month, day back into numeric
+    mutate(
+        year  = as.numeric(year),
+        month = as.numeric(month),
+        day   = as.numeric(day)
+    ) %>%
+    
+    # unite
+    unite(order_date_united, year, month, day, sep = "-", remove = FALSE) %>%
+    mutate(order_date_united = as.Date(order_date_united))
+
+
+
+
+
+
     
     
     
