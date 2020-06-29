@@ -67,6 +67,8 @@ glimpse(bikes_tbl)
 Review Primary Product Category (`category_1`).
 
 ```{r}
+bike_orderlines_tbl %>%
+    distinct(category_1)
 
 ```
 
@@ -74,13 +76,15 @@ Review Primary Product Category (`category_1`).
 Review Secondary Product Category (`category_2`).
 
 ```{r}
-
+bike_orderlines_tbl %>%
+    distinct(category_2)
 ```
 
 Review Frame Material (`frame_material`).
 
 ```{r}
-
+bike_orderlines_tbl %>%
+    distinct(frame_material)
 ```
 
 
@@ -95,14 +99,33 @@ Review Frame Material (`frame_material`).
 Review Primary Product Category (`category_1`).
 
 ```{r}
-
+bike_orderlines_tbl %>%
+    select(category_1, category_2, total_price) %>%
+    group_by(category_1, category_2) %>%
+    summarize(Sales = sum(total_price)) %>%
+    ungroup() %>%
+    arrange(desc(Sales)) %>%
+    rename(
+        `Primary Category` = category_1,
+        `Secondary Category` = category_2
+    ) %>%
+    mutate(Sales = scales::dollar(Sales))
     
 ```
 
 Review Secondary Product Category (`category_2`).
 
 ```{r}
-
+bike_orderlines_tbl %>%
+    select(category_2, total_price) %>%
+    group_by(category_2) %>%
+    summarize(Sales = sum(total_price)) %>%
+    ungroup() %>%
+    arrange(desc(Sales)) %>%
+    rename(
+        `Secondary Category` = category_2
+    ) %>%
+    mutate(Sales = scales::dollar(Sales))
     
 ```
 
@@ -110,7 +133,14 @@ Review Secondary Product Category (`category_2`).
 Review Frame Material (`frame_material`).
 
 ```{r}
-
+bike_orderlines_tbl %>%
+    select(frame_material, total_price) %>%
+    group_by(frame_material) %>%
+    summarize(Sales = sum(total_price)) %>%
+    ungroup() %>%
+    arrange(desc(Sales)) %>%
+    rename(`Frame Material` = frame_material) %>%
+    mutate(Sales = scales::dollar(Sales))
     
 ```
 
