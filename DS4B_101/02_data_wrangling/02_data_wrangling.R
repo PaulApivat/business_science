@@ -202,6 +202,39 @@ bike_orderlines_tbl %>%
 
 # 4.0 Adding Columns with mutate() ----
 
+# Add column with mutate
+bike_orderlines_prices <- bike_orderlines_tbl %>%
+    select(order_date, model, quantity, price) %>%
+    mutate(total_price = quantity * price)
+
+bike_orderlines_prices
+
+# Overwrite Column (provide new column name and transformation)
+bike_orderlines_prices %>%
+    mutate(total_price = log(total_price))
+
+# Transformations on Column
+bike_orderlines_prices %>%
+    mutate(total_price_log = log(total_price)) %>%
+    mutate(total_price_sqrt = total_price^0.5)
+
+# Adding Flag (Binary Feature - True or False)
+# An example of Feature Engineering - developing features based on knowledge of important aspect of data
+
+bike_orderlines_prices %>%
+    # feature eng of is_supersix column
+    mutate(is_supersix = model %>% 
+                         str_to_lower() %>% 
+                         str_detect("supersix")) %>%
+    # filter based on new feature
+                         filter(is_supersix)
+
+# Binning with ntile()
+# useful for grouping into cohorts and detecting relationships within continuous variables
+
+bike_orderlines_prices %>%
+    # placing prices in High, Medium, Low bins - wow
+    mutate(total_price_binned = ntile(total_price, 3))
 
 
 
