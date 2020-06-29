@@ -114,9 +114,55 @@ bikes_tbl %>%
 
 # 3.1 filter(): formula filtering ----
 
+bikes_tbl %>%
+    select(model, price) %>%
+    # can use mean() or median() for filter
+    filter(price > mean(price))
 
+# filter using logical statements OR, AND etc. 
+bikes_tbl %>%
+    select(model, price) %>%
+    # filter using or statement
+    filter((price > 5000) | (price < 1000)) %>%
+    arrange(desc(price)) %>%
+    view()
+
+# filter using logical operators
+# > < <= >= is.na() !is.na() %in% ! | &
+
+# filter with multiple columns
+# only model Supersix that's above 6000
+bikes_tbl %>%
+    select(model, price) %>%
+    filter(price > 6000,
+           model %>% str_detect("Supersix"))
+
+bikes_tbl %>%
+    select(model, price) %>%
+    filter(model %>% str_detect("Supersix"))
+
+# filter with logical boolean operators
+# %in% == and !=
+
+# Filter for one or more conditions using == and %in%
+# use %in% for 2 or more categories within a column
+bike_orderlines_tbl %>%
+    filter(category_2 %in% c("Over Mountain", "Trail", "Endurance Road"))
+
+
+bike_orderlines_tbl %>%
+    filter(category_2=="Over Mountain")
+
+bike_orderlines_tbl %>%
+    filter(category_2 != "Over Mountain")
+
+# filter for all categories except Over Mountain, Trail, Enduranc Road 
+# use ! NOT 
+bike_orderlines_tbl %>%
+    filter(!(category_2 %in% c("Over Mountain", "Trail", "Endurance Road")))
 
 # 3.2 slice(): filtering with row number(s) ----
+
 
 
 
