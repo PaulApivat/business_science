@@ -386,27 +386,94 @@ bikeshop_revenue_tbl %>%
 
 # 7.0 Reshaping (Pivoting) Data with spread() and gather() ----
 
+# Wide data is Reader Friendly (excel friendly)
+# Long data is Analysis Friendly
+
 # 7.1 spread(): Long to Wide ----
 
+bikeshop_revenue_formatted_tbl <- bikeshop_revenue_tbl %>%
+    spread(key = category_1, value = sales) %>%
+    arrange(desc(Mountain)) %>%
+    rename(`Bikeshop Name` = bikeshop_name) %>%
+    
+    mutate(
+        Mountain = scales::dollar(Mountain),
+        Road = scales::dollar(Road)
+    )
+
+bikeshop_revenue_formatted_tbl
 
 # 7.2 gather(): Wide to Long ----
 
+bikeshop_revenue_formatted_tbl %>%
+    gather(key = "category_1", value = "sales", Mountain, Road)
 
+
+# alternative way: negate `Bikeshop Name``
+bikeshop_revenue_formatted_tbl %>%
+    gather(key = "category_1", value = "sales", -`Bikeshop Name`)
+
+# convert dollar text to numeric value (chr -> dbl)
+bikeshop_revenue_formatted_tbl %>%
+    gather(key = "category_1", value = "sales", Mountain, Road) %>%
+    # use regex to remove $ and , then pipe into double
+    mutate(sales = sales %>% str_remove_all("\\$|,") %>% as.double()) %>%
+    arrange(desc(sales))
 
 
 # 8.0 Joining Data by Key(s) with left_join() (e.g. VLOOKUP in Excel) ----
 
+orderlines_tbl
 
+bikes_tbl
 
+# LEFT_JOIN: data on the LEFT leads (is preserved); 
+# data on the RIGHT gets merged into left
+
+?left_join
+
+orderlines_tbl %>%
+    left_join(y = bikes_tbl, by = c("product.id" = "bike.id"))
 
 # 9.0 Binding Data by Row or by Column with bind_rows() and bind_col() ----
 
+# bind_cols() - two dataframes must have same number of rows
+# bind_rows() - two dataframes must have same number of columns & column names
+
 # 9.1 bind_cols() ----
 
+bike_orderlines_tbl %>%
+    # select everything except columns with "order" in the name
+    select(-contains("order")) %>%
+    # get back order_id
+    bind_cols(
+        bike_orderlines_tbl %>% select(order_id)
+    )
 
 
 
 # 9.2 bind_rows() ----
 
+# get training data
+train_tbl <- bike_orderlines_tbl %>%
+    # slice( 1 : (nrow(.)/2) ) - slice 1-to-half-of-all-rows     (n=7822 rows)
+    slice(1:(nrow(.)/2))
+
+train_tbl
+
+# get testing data
+test_tbl <- bike_orderlines_tbl %>%
+    slice((nrow(.)/2 + 1):nrow(.))
+
+test_tbl
+
+# bind training and testing sets back together
+train_tbl %>%
+    bind_rows(test_tbl)
+    
+    
+    
+    
+    
 
 
