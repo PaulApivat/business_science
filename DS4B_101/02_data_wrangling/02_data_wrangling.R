@@ -163,8 +163,40 @@ bike_orderlines_tbl %>%
 
 # 3.2 slice(): filtering with row number(s) ----
 
+# get top five rows with highest price
+# arrange by price in descending order, then grab rows 1:5
+bikes_tbl %>%
+    arrange(desc(price)) %>%
+    slice(1:5)
+
+# get five rows with lowest price
+#
+bikes_tbl %>%
+    arrange(price) %>%
+    slice(1:5)
 
 
+bikes_tbl %>%
+    arrange(desc(price)) %>%
+    slice(93:97)
+
+bikes_tbl %>%
+    arrange(desc(price)) %>%
+    # nrow(.) gets total number of rows in the table; nrow(.)-4 = 93, nrow(.) = 97
+    slice((nrow(.)-4):nrow(.))
+
+# 3.3 distinct() Unique Values ----
+
+bike_orderlines_tbl %>%
+    distinct(category_1)
+
+# distinct combination of category 1 and 2
+bike_orderlines_tbl %>%
+    distinct(category_1, category_2)
+
+# unique bikeshop_names, city and state
+bike_orderlines_tbl %>%
+    distinct(bikeshop_name, city, state)
 
 
 
