@@ -354,10 +354,34 @@ bike_orderlines_missing %>%
 
 # 6.1 rename: One column at a time ----
 
+bikeshop_revenue_tbl <- bike_orderlines_tbl %>%
+    select(bikeshop_name, category_1, total_price) %>%
+    
+    group_by(bikeshop_name, category_1) %>%
+    summarize(sales = sum(total_price)) %>%
+    ungroup() %>%
+    
+    arrange(desc(sales))
+
+bikeshop_revenue_tbl %>%
+    # back ticks only necessary when there's a space between words
+    rename(
+        `Bikeshop Name` = bikeshop_name,
+        `Primary Category` = category_1,
+        Sales = sales
+    )
+
+
 
 # 6.2 set_names: All columns at once ---
 
+bikeshop_revenue_tbl %>%
+    set_names(c("Bikeshop Name", "Primary Category", "Sales"))
 
+# programmatically update names
+# if you have A LOT of columns, you can programmatically update (rather than manually)
+bikeshop_revenue_tbl %>%
+    set_names(names(.) %>% str_replace("_", " ") %>% str_to_title())
 
 
 # 7.0 Reshaping (Pivoting) Data with spread() and gather() ----
