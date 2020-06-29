@@ -303,6 +303,50 @@ bike_orderlines_tbl %>%
     ungroup() %>%
     arrange(desc(revenue))
 
+# Summary Functions (see dplyr cheatsheet)
+
+# Frequency of categories
+bike_orderlines_tbl %>%
+    group_by(category_1, category_2) %>%
+    summarize(
+        count = n(),
+        avg = mean(total_price),
+        med = median(total_price),
+        sd = sd(total_price),
+        min = min(total_price),
+        max = max(total_price)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(count))
+
+# DETECTING AND HANDLING MISSING VALUES
+
+# summarize_all() - detecting missing values
+
+# inject missing values
+bike_orderlines_missing <- bike_orderlines_tbl %>%
+    # set first four rows (only) to missing values
+    mutate(total_price = c(rep(NA, 4), total_price[5:nrow(.)]))
+
+# detect missing values
+# ~ is.na(.) applies is.na() to all columns, returning 4 true, 15640 false
+# ~ sum(is.na(.)) counts the number of true values, returning 4
+bike_orderlines_missing %>%
+    summarize_all(~ sum(is.na(.)))
+
+# detect proportion (percentage) of missing data
+bike_orderlines_missing %>% 
+    summarize_all(~ sum(is.na(.)) / length(.))
+
+# OPTIONS FOR HANDLING MISSING VALUES
+# 1. filter() - remove
+# 2. drop_na() - remove (filter shortcut)
+# 3. fill() - taking leading/lagging value and replace up/down
+# 4. replace_na() - replace by specifying
+# 5. impute - programmatically replace (advanced)
+
+bike_orderlines_missing %>%
+    filter(!is.na(total_price))
 
 
 
