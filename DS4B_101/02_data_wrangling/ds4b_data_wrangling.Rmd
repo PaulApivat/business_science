@@ -67,12 +67,14 @@ iris %>%
 
 ```
 
-## Group By and Summarize
+## Chaining Multiple Pipes
 
-You can also embed plots, for example:
+Here's an interesting pattern of code I picked up, group_by(), summarize(), ungroup(), then mutate() and rename(), then arrange(). Previously, I had not used **longer patterns** of piping to explore data. Much of my code involved maybe 2-3 pipes, saving a new dataframe, then continuing to explore. 
 
-```{r irs, echo=TRUE, results='hide'}
-# describe Species by Petal Length
+Here i'm piping seven operations without creating a new dataframe and it allows for more efficient exploration. 
+
+```{r iris, echo=TRUE, results='hide'}
+# Chaining multiple pipes to more efficiently explore data
 iris %>%
     group_by(Species) %>%
     summarize(
@@ -82,8 +84,145 @@ iris %>%
         sd = sd(Petal.Length),
         min = min(Petal.Length),
         max = max(Petal.Length)
-    )
+    ) %>%
+    ungroup() %>%
+    mutate(Range = max - min) %>%
+    rename(
+        `Standard Deviation` = sd,
+        `Average` = mean,
+        `Mininum` = min, 
+        `Maximum` = max
+    ) %>%
+    arrange(desc(Average))
 
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Slice: Highlighting a Distinction between Base and Tidyverse
+
+Using slice() to grab portions of rows is another function I had not used prior. I might have used base R to grab specific rows. But looking back all my Base R operations were **one-off**. Below is an example, I may use Base-R to grab the first five rows of a dataframe. If I wanted to sort by a particular column, then grab the first give rows, it turns into two operations. First sorting by column, decreasing and assigning to 'x', then grabing first five rows of 'x'. 
+
+With dplyr, particularly patterns taught in the class, you can more seamlessly arrange, in descending order by a particular column (Solar.R), then slice the first five rows. 
+
+
+```{r, echo=TRUE, results='hide'}
+# tidyverse to grab first five rows with slice(), but this allows pre-arranging it first. 
+airquality %>%
+    arrange(desc(Solar.R)) %>%
+    slice(1:5)
+
+# base R to grab first five rows
+airquality[1:5,]
+
+
+# base R to first sort by Solar.R, then assign to variable 'x', then grab first five values
+x <- sort(airquality$Solar.R, decreasing = TRUE)
+x[1:5]
+
+# fastest way to grab Solar.R
+sort(airquality$Solar.R, decreasing = TRUE)[1:5]
+
+```
+
+
+## Spread and Gather
+
+In trying to demonstrate gather() and spread() using the built-in `iris` dataset. 
+
+```{r, echo=TRUE, results='hide'}
+
+# no missing values
+iris %>%
+    summarize_all(~ sum(is.na(.)))
+
+# group by Species and sum Petal.Width
+iris %>%
+    group_by(Species) %>%
+    summarize(Petal_Width = sum(Petal.Width))
+
+# gather (before spread)
+iris %>% 
+    # create unique ID for each row
+    mutate(ID=row_number(Species)) %>%
+    # put ID in first column
+    select(ID, everything()) %>%
+    # use values from columns 2-5 as value
+    gather(key = Measure_Type, value = Values,2:5) %>%
+    # can spread by either Measure_Type or Species
+    spread(key = Species, value = Values)
+
+
+```
+
+## Filter and Mutate with nested pipes
+
+Using both `airquality` and `USArrests` to demonstrate various data wrangling operations involving filter and mutate with nested pipes. 
+
+```{r, echo=TRUE, results='hide'}
+
+# filter airquality for beginning and end of the month
+airquality %>%
+    filter(Day < 5 | Day > 25)
+
+airquality %>%
+    filter(Temp < 71 & Temp > 64)
+
+# Filter states that start with a certain alphabet
+USArrests
+
+# convert row name to column
+USArrest_rownames <- tibble::rownames_to_column(USArrests, "States")
+
+
+# Descriptive statistics of Violence_Type by all States that start with "New"
+USArrest_rownames %>%
+    select(States, UrbanPop, everything()) %>%
+    filter(States %>% 
+               str_detect("New")) %>%
+    # good to define which columns will be gather() in new column
+    gather(`Murder`, `Assault`, `Rape`, key = "Violence_Type", value = "cases" ) %>%
+    group_by(Violence_Type) %>%
+    summarize(
+        avg = mean(cases),
+        min = min(cases),
+        max = max(cases)
+    ) %>%
+    ungroup() %>%
+    mutate(avg = round(avg,1))
+
+
+# Filter by states starting with "A" and murder higher than 10
+USArrest_rownames %>%
+    filter(Murder > 10, 
+           States %>% str_detect("A"))
+
+# filter for all states beginning with "New"
+USArrest_rownames %>%
+    filter(States %>% str_detect("New")) %>%
+    arrange(desc(Assault))
+
+USArrest_rownames %>%
+    filter(Murder > 5, 
+           States %>% str_detect("M")) %>%
+    arrange(desc(Murder))
+    
+
+```
+
+## Handling Missing Values: Replace NA
+
+```{r, echo=TRUE, results='hide'}
+
+# Quickly get number of "missing values" for all columns
+airquality %>%
+    summarize_all(~sum(is.na(.)))
+
+# Get proportion of missing values for each column
+airquality %>%
+    summarize_all(~ sum(is.na(.)) / length(.))
+
+# Quickly replace missing values in columns Ozone and Solar.R with '0'
+airquality %>%
+    replace_na(list(Ozone = 0, Solar.R = 0))
+
+```
+
