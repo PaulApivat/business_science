@@ -1,0 +1,89 @@
+---
+title: "DS4B Data Wrangling Recap"
+author: "Paul Apivat Hanvongse"
+date: "6/30/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Select & Arrange
+
+I had previously selected by column name, never by numeric vector; and I had never used select_helpers (starts_with, contains, matches, num_range). I had never re-arranged columns using select `select(col3:col5, everything())`. `Select_if()` also comes in handy as well as the `is.integer`, `is.double` data types. 
+
+Knowing data types allow for efficient selection. 
+
+I've used arrange() and desc(), so I don't go into too much detail here. 
+
+```{r USArrests, echo=TRUE, results='hide'}
+library(tidyverse)
+
+# select first three columns using numeric vector
+USArrests %>%
+    select(1:3)
+
+# re-arrange columns using select; place UrbanPop first
+USArrests %>%
+    select(UrbanPop, everything())
+
+# select if integer 
+USArrests %>%
+    select_if(is.integer)
+
+USArrests %>%
+    select_if(~ !is.double(.))
+
+# select if double
+USArrests %>%
+    select_if(is.double)
+
+USArrests %>%
+    select_if(~ !is.integer(.))
+
+# swithing to IRIS dataframe
+# select helpers: starts_with, contains
+iris %>%
+    select(starts_with("petal"))
+
+iris %>%
+    select(contains("length")) %>% 
+    head()
+
+# using pull() instead of select() to pull out contents of a column
+iris %>%
+    pull(Sepal.Width) %>%
+    head()
+
+iris %>% 
+    select_if(is.factor) %>%
+    head()
+
+# arrange Species in descending order by Petal.Length
+iris %>%
+    select(Petal.Length, Species) %>%
+    arrange(desc(Petal.Length))
+
+```
+
+## Group By and Summarize
+
+You can also embed plots, for example:
+
+```{r irs, echo=TRUE, results='hide'}
+# describe Species by Petal Length
+iris %>%
+    group_by(Species) %>%
+    summarize(
+        count = n(),
+        mean = mean(Petal.Length),
+        median = median(Petal.Length),
+        sd = sd(Petal.Length),
+        min = min(Petal.Length),
+        max = max(Petal.Length)
+    )
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
