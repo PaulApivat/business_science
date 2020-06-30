@@ -184,21 +184,28 @@ The following Category_2 models do not contain both: Over Mountain, Triathlon, C
 ```{r}
 bike_orderlines_tbl %>%
     select(category_1, category_2, frame_material, total_price) %>%
+    # group_by, summarize, ungroup
     group_by(category_1, category_2, frame_material) %>%
     summarize(Sales = sum(total_price)) %>%
     ungroup() %>%
+    # spread
     spread(key = frame_material, value = Sales) %>%
     # efficient way to find NA and replace with 0
     replace_na(list(Aluminum = 0, Carbon = 0)) %>%
+    # add total sales column
     mutate(total_sales = Aluminum + Carbon) %>%
+    # arrange descending
     arrange(desc(total_sales)) %>%
     # more advanced way to implement scales::dollar
     mutate_if(is.numeric, scales::dollar) %>%
+    
     #mutate(
      #   Aluminum = scales::dollar(Aluminum),
      #   Carbon = scales::dollar(Carbon),
      #   total_sales = scales::dollar(total_sales)
     #) %>%
+    
+    # rename columns
     rename(
         `Primary Category` = category_1,
         `Secondary Category` = category_2,
