@@ -192,11 +192,13 @@ bike_orderlines_tbl %>%
     replace_na(list(Aluminum = 0, Carbon = 0)) %>%
     mutate(total_sales = Aluminum + Carbon) %>%
     arrange(desc(total_sales)) %>%
-    mutate(
-        Aluminum = scales::dollar(Aluminum),
-        Carbon = scales::dollar(Carbon),
-        total_sales = scales::dollar(total_sales)
-    ) %>%
+    # more advanced way to implement scales::dollar
+    mutate_if(is.numeric, scales::dollar) %>%
+    #mutate(
+     #   Aluminum = scales::dollar(Aluminum),
+     #   Carbon = scales::dollar(Carbon),
+     #   total_sales = scales::dollar(total_sales)
+    #) %>%
     rename(
         `Primary Category` = category_1,
         `Secondary Category` = category_2,
