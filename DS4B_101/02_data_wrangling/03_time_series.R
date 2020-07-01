@@ -233,8 +233,25 @@ bike_sales_m_tbl %>%
 
 # 3.2 Difference from first observation ----
 
+# eg. how everything compares to January of that year
+bike_sales_y_tbl %>%
+    mutate(sales_2011 = first(sales)) %>%
+    mutate(diff_2011 = sales - sales_2011) %>%
+    mutate(pct_diff_2011 = diff_2011 / sales_2011) %>%
+    mutate(pct_diff_2011_chr = scales::percent(pct_diff_2011))
 
 
+bike_sales_m_tbl %>%
+    
+    group_by(year) %>%
+    
+    mutate(sales_jan = first(sales)) %>% 
+    mutate(
+        diff_jan = sales - sales_jan,
+        pct_diff_jan = diff_jan / sales_jan,
+        pct_diff_jan_chr = scales::percent(pct_diff_jan)
+    ) %>%
+    ungroup()
 
 
 # 4.0 Cumulative Calculations ----
