@@ -162,7 +162,7 @@ bike_sales_m_tbl <- bike_orderlines_tbl %>%
     summarize(sales = sum(total_price)) %>%
     ungroup()
 
-bike_sales_m_tbl
+bike_sales_m_tbl %>% view()
 
 # Floor Date
 # Time Series Aggregation floor_date()
@@ -229,6 +229,18 @@ calculate_pct_diff <- function(data){
 
 bike_sales_m_tbl %>%
     calculate_pct_diff() %>%
+    # need to combine year and month into year_month
+    mutate(
+        year = as.character(year),
+        month = as.character(month),
+        day = 1
+    ) %>%
+    mutate(year_month = paste(year, month, day)) %>% 
+    mutate(year_month = year_month %>% ymd()) %>%
+    # plot
+    ggplot(aes(x=year_month, y=pct_diff_1)) + geom_line() + geom_smooth(method = "lm", se = FALSE)
+
+    
     view()
 
 # 3.2 Difference from first observation ----
