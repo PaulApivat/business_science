@@ -52,6 +52,31 @@ order_date_tbl %>%
 
 "January 1, 1985" %>% mdy()
 
+# all conversions to YYYY-MM-DD
+"Jan, 23 1985" %>% mdy()
+"Jan 23, 1985" %>% mdy()
+"25 Apr, 1981" %>% dmy()
+"1st Feb, 1999" %>% dmy()
+"1983 Sep, 29" %>% ymd()  # Had to be Sep, not Sept
+"1983, Sep 29" %>% ymd()
+
+"3rd Mar, 1989" %>% dmy()
+"5 Apr, 1990" %>% dmy()
+"1999.2.17" %>% ymd()
+
+"08~14~2019" %>% mdy() 
+"08*14*2019" %>% mdy()
+"08*14/2019" %>% mdy()
+"Aug 14th 2019" %>% mdy()
+"Aug,14th 2019" %>% mdy()
+"Aug,14th,2019" %>% mdy()
+"Aug14th2019" %>% mdy()
+"August 14th 2019" %>% mdy()
+"August14th2019" %>% mdy()
+"August 14th2019" %>% mdy()
+
+"Aug 14, 2019" %>% mdy()
+
 # other conversion functions
 ymd()
 dmy()
