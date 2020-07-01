@@ -136,11 +136,33 @@ order_date_tbl %>%
 
 # 2.0 Time-Based Data Grouping ----
 
+bike_sales_y_tbl <- bike_orderlines_tbl %>%
+    select(order_date, total_price) %>%
+    # lubridate into ymd in order to extract later
+    mutate(order_date = ymd(order_date)) %>%
+    # extract year component
+    mutate(year = year(order_date)) %>%
+    # group_by and summarize
+    group_by(year) %>%
+    summarize(sales = sum(total_price)) %>%
+    ungroup()
 
+bike_sales_y_tbl
 
+bike_sales_m_tbl <- bike_orderlines_tbl %>%
+    select(order_date, total_price) %>%
+    # lubridate into ymd() in order to extract later
+    mutate(order_date = ymd(order_date)) %>%
+    mutate(
+        year = year(order_date),
+        month = month(order_date, label = TRUE, abbr = TRUE)
+    ) %>%
+    # group_by and summarize()
+    group_by(year, month) %>%
+    summarize(sales = sum(total_price)) %>%
+    ungroup()
 
-
-
+bike_sales_m_tbl
 
 # 3.0 Measuring Change ----
 
