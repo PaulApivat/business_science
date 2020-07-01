@@ -83,19 +83,56 @@ dmy()
 
 # Extractor
 
+"2011-Jan-01" %>% ymd() %>% year()
 
+# label changes from either numeric or factor
+"2011-Jan-01" %>% ymd() %>% month(label = TRUE, abbr = FALSE)
+
+"2011-1-01" %>% ymd() %>% month(label = TRUE, abbr = FALSE)
+
+"2011-01-01" %>% ymd() %>% wday() #7
+"2011-01-01" %>% ymd() %>% wday(label = TRUE) # Sat
+"2011-01-01" %>% ymd() %>% wday(label = TRUE, abbr = FALSE) # Saturday
+
+"2011-01-21" %>% ymd() %>% day()
 
 # Helpers
 
+# "2020-07-01 14:07:47 +07"
+now()
+# "2020-07-01"
+today() %>% class()
 
 
 # Periods & Durations - Add/subract time to/from a date
 
+# note: Periods account for daylight savings, time and leap year
+# note: Duration are just physical time spans without irregularities
 
+today() + days(12)
+
+# ddays() - add or subtract a duration in days
+today() + ddays(12)
+
+# no leap years in Asia?
+today() + years(4) # Period
+today() + dyears(4) # Duration 
 
 # Intervals - Calculate time-based distance 
 
+# Interval Objects 2 snapshots Start -- End
+# 2020-07-01 UTC--2020-07-13 UTC
+i <- interval(today(), today() + ddays(12))
 
+# always divide interval with Duration (ddays, dminutes, dseconds)
+i / ddays(1) # interval / days = how many days within interval
+i / dminutes(1)  # interval / minutes = how many minutes within interval
+i / dseconds(1)
+
+# Find interval between order_date and today
+order_date_tbl %>%
+    mutate(today = today()) %>%
+    mutate(diff_days = interval(order_date, today) / ddays(1))
 
 # 2.0 Time-Based Data Grouping ----
 
