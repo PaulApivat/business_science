@@ -32,10 +32,9 @@ order_date_tbl %>%
     mutate(order_date_chr = as.character(order_date)) %>%
     # add time formatted as chr
     mutate(order_date_chr2 = order_date_chr %>% str_c(" 00:00:00")) %>%
+    # use ymd() and ymd_hms() to convert character to date/datetime
     mutate(order_date_date = order_date_chr %>% ymd()) %>%
     mutate(order_date_dttm = order_date_chr2 %>% ymd_hms())
-
-
 
 
 
@@ -43,7 +42,19 @@ order_date_tbl %>%
 
 # Conversion
 
+# character to date/date time class
 
+# June 1st, 2018 --> date converter output always YYYY-MM-DD
+"06/01/18" %>% mdy() %>% class()
+
+# Month-Day-Year + Hour-Minute-Second converts to date-time (POSIXct, POSIXt)
+"06.01.18 12:30:15" %>% mdy_hms() %>% class()
+
+"January 1, 1985" %>% mdy()
+
+# other conversion functions
+ymd()
+dmy()
 
 # Extractor
 
