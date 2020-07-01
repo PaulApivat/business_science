@@ -186,9 +186,50 @@ bike_orderlines_tbl %>%
 
 # 3.1 Difference from most recent observation ----
 
+# Find % Change Year-to-Year
+# lag() useful for comparing previous values in a vector;
+# lag() creates another column, n=1 offset by one-year
+bike_sales_y_tbl %>%
+    mutate(sales_lag_1 = lag(sales, n = 1)) %>%
+    # Handle NA
+    mutate(sales_lag_1 = case_when(
+        # if sales_lag_1 is NA, use sales
+        is.na(sales_lag_1) ~ sales,
+        # otherwise, keep using sales_lag_1
+        TRUE ~ sales_lag_1
+    )) %>%
+    # calculate diff year-to-year
+    mutate(diff_1 = sales - sales_lag_1) %>%
+    # calculate % difference, Pro Tip: Always divide diff by reference point - previous year
+    mutate(pct_diff_1 = diff_1 / sales_lag_1) %>%
+    mutate(pct_diff_1_chr = scales::percent(pct_diff_1))
 
+### Pro Tip: never good idea to "copy-and-paste" code. Create a function!!!
+### Function Basics: create a verb name, create arguments, create body
 
+# Find % Change Month-to-Month
 
+calculate_pct_diff <- function(data){
+    
+    data %>%
+        mutate(sales_lag_1 = lag(sales, n = 1)) %>%
+        # Handle NA
+        mutate(sales_lag_1 = case_when(
+            # if sales_lag_1 is NA, use sales
+            is.na(sales_lag_1) ~ sales,
+            # otherwise, keep using sales_lag_1
+            TRUE ~ sales_lag_1
+        )) %>%
+        # calculate diff year-to-year
+        mutate(diff_1 = sales - sales_lag_1) %>%
+        # calculate % difference, Pro Tip: Always divide diff by reference point - previous year
+        mutate(pct_diff_1 = diff_1 / sales_lag_1) %>%
+        mutate(pct_diff_1_chr = scales::percent(pct_diff_1))
+}
+
+bike_sales_m_tbl %>%
+    calculate_pct_diff() %>%
+    view()
 
 # 3.2 Difference from first observation ----
 
