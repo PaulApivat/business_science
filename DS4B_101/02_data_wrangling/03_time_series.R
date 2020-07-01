@@ -164,6 +164,24 @@ bike_sales_m_tbl <- bike_orderlines_tbl %>%
 
 bike_sales_m_tbl
 
+# Floor Date
+# Time Series Aggregation floor_date()
+# Pro Tip: Plotting requires a single time series column
+
+bike_orderlines_tbl %>%
+    select(order_date, total_price) %>%
+    # lubridate
+    mutate(order_date = ymd(order_date)) %>%
+    mutate(year_month = floor_date(order_date, unit = "month")) %>%
+    # group_by and summarize
+    group_by(year_month) %>%
+    summarize(sales = sum(total_price)) %>%
+    ungroup() %>%
+    # plotting trends now that year and month are in one column
+    ggplot(aes(x=year_month, y=sales)) + geom_line() + geom_smooth(method = "lm", se = FALSE)
+
+
+
 # 3.0 Measuring Change ----
 
 # 3.1 Difference from most recent observation ----
