@@ -240,11 +240,9 @@ bike_sales_y_tbl %>%
     mutate(pct_diff_2011 = diff_2011 / sales_2011) %>%
     mutate(pct_diff_2011_chr = scales::percent(pct_diff_2011))
 
-
+# measuring change from first month of each year
 bike_sales_m_tbl %>%
-    
     group_by(year) %>%
-    
     mutate(sales_jan = first(sales)) %>% 
     mutate(
         diff_jan = sales - sales_jan,
@@ -256,6 +254,18 @@ bike_sales_m_tbl %>%
 
 # 4.0 Cumulative Calculations ----
 
+# cumulative sales % always goes up to 100%
+
+bike_sales_y_tbl %>%
+    mutate(cumulative_sales = cumsum(sales)) %>%
+    mutate(cumulative_sales_pct = cumulative_sales/sum(sales)) %>%
+    mutate(cumulative_sales_pct_chr = scales::percent(cumulative_sales_pct))
+
+bike_sales_m_tbl %>%
+    group_by(year) %>%
+    mutate(cumulative_sales = cumsum(sales)) %>%
+    mutate(cumulative_sales_pct = cumulative_sales/sum(sales)) %>%
+    mutate(cumulative_sales_pct_chr = scales::percent(cumulative_sales_pct))
 
 
 
