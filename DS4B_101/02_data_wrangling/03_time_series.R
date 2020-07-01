@@ -240,8 +240,7 @@ bike_sales_m_tbl %>%
     # plot
     ggplot(aes(x=year_month, y=pct_diff_1)) + geom_line() + geom_smooth(method = "lm", se = FALSE)
 
-    
-    view()
+
 
 # 3.2 Difference from first observation ----
 
@@ -268,10 +267,15 @@ bike_sales_m_tbl %>%
 
 # cumulative sales % always goes up to 100%
 
+# cumulative sales / sales on a yearly basis
 bike_sales_y_tbl %>%
     mutate(cumulative_sales = cumsum(sales)) %>%
     mutate(cumulative_sales_pct = cumulative_sales/sum(sales)) %>%
     mutate(cumulative_sales_pct_chr = scales::percent(cumulative_sales_pct))
+
+# one mutate(), instead of three
+bike_sales_y_tbl %>% 
+    mutate(cumulative_sales_pct = scales::percent(cumsum(sales)/sum(sales)))
 
 bike_sales_m_tbl %>%
     group_by(year) %>%
@@ -279,7 +283,9 @@ bike_sales_m_tbl %>%
     mutate(cumulative_sales_pct = cumulative_sales/sum(sales)) %>%
     mutate(cumulative_sales_pct_chr = scales::percent(cumulative_sales_pct))
 
-
+# one mutate(), instead of three
+bike_sales_m_tbl %>% 
+    mutate(cumulative_sales_pct = scales::percent(cumsum(sales)/sum(sales)))
 
 # 5.0 Rolling Calculations ----
 
