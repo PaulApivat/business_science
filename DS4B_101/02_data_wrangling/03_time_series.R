@@ -289,6 +289,18 @@ bike_sales_m_tbl %>%
 
 # 5.0 Rolling Calculations ----
 
+# Moving Averages, Moving Medians, Rolling Medians
+# NOTE: rolling mean exposes the trend line in time series; 
+# Rolling mean REDUCES effects of outliers enabling analyst to visualize a trend
+
+# Pro Tip: You do NOT want to group_by moving averages; Moving Averages detect trends, difficult to do in a group
+
+bike_sales_m_tbl %>%
+    # rollmean() requires input necessary arguments, k, na.pad = TRUE
+    # rollmean() centers value by default, we want align = "right" (not left), fill = 0
+    mutate(roll_mean_3 = rollmean(sales, k = 3, na.pad = TRUE, align = "right", fill = NA)) %>%
+    mutate(roll_mean_6 = rollmean(sales, k = 6, na.pad = TRUE, align = "right", fill = NA))
+
 
 
 # 6.0 Filtering Date Ranges ---- 
