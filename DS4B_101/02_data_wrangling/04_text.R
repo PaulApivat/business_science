@@ -40,15 +40,34 @@ bikes_tbl %>%
 
 
 # Case
+bikeshop_name <- "Ithaca Mountain Climbers"
 
+str_to_upper(bikeshop_name)
+str_to_lower(bikeshop_name)
+str_to_title(bikeshop_name) # capitalizing first letter of each word
 
 # Concatenation
 
 # Vector
+order_id <- 1
+order_line <- 1
+
+str_c("Order line: ", order_id, ".", order_line,
+      " sent to Customer: ", bikeshop_name)
 
 
+str_glue("Order line: {order_id}.{order_line} sent to Customer: {str_to_upper(bikeshop_name)}")
 
 # Tibble
+bike_orderlines_tbl %>%
+    select(bikeshop_name, order_id, order_line) %>%
+    mutate(purchase_statement = str_glue(
+        "Order line: {order_id}.{order_line} sent to Customer: {str_to_upper(bikeshop_name)}"
+    ) %>% as.character()) 
+
+
+
+
 
 
 # 1.3 Separating Text: See tidyr::separate() ----
