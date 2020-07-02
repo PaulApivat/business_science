@@ -324,3 +324,15 @@ bike_orderlines_tbl %>%
     # filter by grabing year() of order_date, which includes 2012, 2013
     filter(year(order_date ) %in% c(2012, 2013))
 
+# plot sales line with 6-month rolling average and trendline
+bike_sales_m_tbl %>%
+    # need to combine year and month into year_month
+    mutate(
+        year = as.character(year),
+        month = as.character(month),
+        day = 1
+    ) %>%
+    mutate(year_month = paste(year, month, day)) %>% 
+    mutate(year_month = year_month %>% ymd()) %>%
+    mutate(roll_mean_6 = rollmean(sales, k = 6, na.pad = TRUE, align = "right", fill = NA)) %>%
+    ggplot(aes(x=year_month, y=sales)) + geom_line() + geom_line(aes(y=roll_mean_6), color = 'red') + geom_smooth(method = 'lm', se=FALSE)
