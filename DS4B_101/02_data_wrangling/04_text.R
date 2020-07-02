@@ -189,6 +189,14 @@ bikes_tbl %>%
            sep    = " ", 
            remove = FALSE, 
            fill   = "right") %>%
+  
+  # creating a base feature
+  mutate(model_base = case_when(
+    # Fix Supersix Evo
+    str_detect(str_to_lower(model_1), "supersix") ~ str_c(model_1, model_2, sep = " "),
+    # catch all
+    TRUE ~ model_1)
+    ) %>%
   view()
   
 # Pro Tip: The "model_" gets recycled when comining with sequence 1:7 in str_c()
