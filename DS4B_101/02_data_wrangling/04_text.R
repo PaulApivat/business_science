@@ -181,10 +181,13 @@ bikes_tbl %>%
   mutate(model = case_when(
     model == "CAAD Disc Ultegra" ~ "CAAD12 Disc Ultegra",
     model == "Syapse Carbon Tiagra" ~ "Synapse Carbon Tiagra",
+    model == "Supersix Evo Hi-Mod Utegra" ~ "Supersix Evo Hi-Mod Ultegra",
     TRUE ~ model
   )) %>%
   
   # separate using spaces - spread features out (makes ure last column is NA)
+  # these columns are simply to split model into model_base and model_tier
+  # will remove these interim columns later
   separate(col    = model, 
            into   = str_c("model_", 1:7), 
            sep    = " ", 
@@ -201,16 +204,38 @@ bikes_tbl %>%
     str_detect(str_to_lower(model_1), "beast") ~ str_c(model_1, model_2, model_3, model_4, sep = " "),
     # Fix Bad Habit
     str_detect(str_to_lower(model_1), "bad") ~ str_c(model_1, model_2, sep = " "),
+    # Fix Scapel 29: note model_2
+    str_detect(str_to_lower(model_2), "29") ~ str_c(model_1, model_2, sep = " "),
     # catch all
     TRUE ~ model_1)
     ) %>%
   
   # get "Tier" feature
   mutate(model_tier = model %>% str_replace(model_base, replacement = "") %>% str_trim()) %>%
+ 
   
   # Remove unnecessary columns
   select(-matches("[0-9]")) %>%
+  
+  # Create Flags
+  mutate(
+    black = model_tier %>% str_to_lower() %>% str_detect("black") %>% as.numeric(),
+    hi_mod = model_tier %>% str_to_lower() %>% str_detect("hi-mod") %>% as.numeric(),
+    team = model_tier %>% str_to_lower() %>% str_detect("team") %>% as.numeric(),
+    red = model_tier %>% str_to_lower() %>% str_detect("red") %>% as.numeric(),
+    ultegra = model_tier %>% str_to_lower() %>% str_detect("ultegra") %>% as.numeric(),
+    dura_ace = model_tier %>% str_to_lower() %>% str_detect("dura ace") %>% as.numeric(),
+    disc = model_tier %>% str_to_lower() %>% str_detect("disc") %>% as.numeric()
+  ) %>%
   view() 
   
 # Pro Tip: The "model_" gets recycled when comining with sequence 1:7 in str_c()
 # useful to quickly make a character vector of repetitive column names
+
+# OBJECTIVE ----
+
+# Build feature set from Model, segment into BASE + TIER
+# then broke out to 7 'FLAGS' column to help MODELING PROCESS
+# detect what the PRICE of the model_base should be
+# but if it has "TIER" in it, can help decide how much 
+# to increase the VALUE of that FEATURE
