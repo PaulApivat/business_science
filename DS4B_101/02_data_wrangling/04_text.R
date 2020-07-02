@@ -90,19 +90,48 @@ bikes_tbl %>%
 
 # 1.4 Trimming Text ----
 
+# get rid of space on both sides
+" text with spaces  " %>% str_trim(side = "both")
+# right or left
+" text with spaces  " %>% str_trim(side = "right")
+" text with spaces  " %>% str_trim(side = "left")
 
 
 # 1.5 Replacement: Used with mutate() [and optionally case_when()] ----
 
 # Vector
+c("CAAD12", "CAAD", "CAAD8") %>% str_replace(pattern = "[0-9]", replacement = "")
+
+c("CAAD12", "CAAD", "CAAD8") %>% str_replace_all(pattern = "[0-9]", replacement = "")
 
 
 # Tibble
 
+bikes_tbl %>%
+  select(model) %>%
+  # pipe from a column
+  mutate(model_num_removed = model %>% 
+           # take out all numbers
+           str_replace_all(pattern = "[0-9]", replacement = "") %>%
+           # trim empty space where numbers used to be
+           str_trim())
 
 
 
 # 1.6 Formatting Numbers ----
+
+# scales::number() is most general
+
+
+value <- 1e6
+(value / 1e6) %>% scales::number(prefix = "$", suffix = "M")
+
+value %>% scales::number(prefix = "$", big.mark = ",", suffix = "M")
+value %>% scales::dollar(scale = 1/1e6, suffix = "M")
+
+pct <- 0.15
+pct %>% scales::number(scale = 100, suffix = "%")
+pct %>% scales::percent()
 
 # values
 
@@ -115,12 +144,24 @@ bikes_tbl %>%
 
 # Replacing text in column names
 
-
+bike_orderlines_tbl %>%
+  set_names(names(.) %>% str_replace("_", ".") %>% str_to_upper())
 
 # Appending text to column names
-
+bike_orderlines_tbl %>%
+  set_names(str_glue("{names(.)}_bike"))
 
 # Appending text to specific column names
+bike_orderlines_colnames_tbl <- bike_orderlines_tbl %>%
+  rename_at(.vars = vars(model:frame_material),
+            # all .vars gets passed to '.' below (so prod_ goes in front)
+            .funs = ~ str_c("prod_", .)) %>%
+  rename_at(.vars = vars(bikeshop_name:state),
+            .funs = ~ str_c("cust_", .)) 
+
+# Once Append text to Column Names, can more easily select them
+bike_orderlines_colnames_tbl %>%
+  select(contains("cust_"), total_price)
 
 
 # 2.0 Feature Engineering with Text -----
