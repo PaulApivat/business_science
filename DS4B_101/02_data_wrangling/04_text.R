@@ -194,6 +194,12 @@ bikes_tbl %>%
   mutate(model_base = case_when(
     # Fix Supersix Evo
     str_detect(str_to_lower(model_1), "supersix") ~ str_c(model_1, model_2, sep = " "),
+    # Fix Fat CAAD bikes
+    str_detect(str_to_lower(model_1), "fat") ~ str_c(model_1, model_2, sep = " "),
+    # Fix Beast of the East
+    str_detect(str_to_lower(model_1), "beast") ~ str_c(model_1, model_2, model_3, model_4, sep = " "),
+    # Fix Bad Habit
+    str_detect(str_to_lower(model_1), "bad") ~ str_c(model_1, model_2, sep = " "),
     # catch all
     TRUE ~ model_1)
     ) %>%
