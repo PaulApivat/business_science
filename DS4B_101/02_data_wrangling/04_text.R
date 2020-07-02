@@ -67,16 +67,25 @@ bike_orderlines_tbl %>%
 
 
 
-
-
-
 # 1.3 Separating Text: See tidyr::separate() ----
+
+# NOTE: use separate() over str_split()
 
 # Vector
 
+# str_split() output is a LIST
+# str_split(simplify = TRUE) output is a MATRIX
+c("Road - Elite Road - Carbon", "Road - Elite Road") %>% 
+  str_split(pattern = " - ", simplify = TRUE)
+
 
 # Tibble
-
+bikes_tbl %>%
+  select(description) %>%
+  separate(col    = description, 
+           into   = c("category_1", "category_2", "frame_material"), 
+           sep    = " - ",
+           remove = FALSE)
 
 
 # 1.4 Trimming Text ----
