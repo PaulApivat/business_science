@@ -180,6 +180,7 @@ bikes_tbl %>%
   # fix typo on row 14 CAAD
   mutate(model = case_when(
     model == "CAAD Disc Ultegra" ~ "CAAD12 Disc Ultegra",
+    model == "Syapse Carbon Tiagra" ~ "Synapse Carbon Tiagra",
     TRUE ~ model
   )) %>%
   
@@ -203,7 +204,13 @@ bikes_tbl %>%
     # catch all
     TRUE ~ model_1)
     ) %>%
-  view()
+  
+  # get "Tier" feature
+  mutate(model_tier = model %>% str_replace(model_base, replacement = "") %>% str_trim()) %>%
+  
+  # Remove unnecessary columns
+  select(-matches("[0-9]")) %>%
+  view() 
   
 # Pro Tip: The "model_" gets recycled when comining with sequence 1:7 in str_c()
 # useful to quickly make a character vector of repetitive column names
