@@ -4,11 +4,11 @@
 library(tidyverse)
 library(lubridate)
 
-bike_orderlines_tbl <- read_rds("00_data/bike_sales/data_wrangled/bike_orderlines.rds")
+bike_orderlines_tbl <- read_rds("../00_data/bike_sales/data_wrangled/bike_orderlines.rds")
 
 bike_orderlines_tbl
 
-bikes_tbl <- readxl::read_excel("00_data/bike_sales/data_raw/bikes.xlsx")
+bikes_tbl <- readxl::read_excel("../00_data/bike_sales/data_raw/bikes.xlsx")
 
 bikes_tbl
 
@@ -18,11 +18,23 @@ bikes_tbl
 # 1.1 Detection: Used with filter() ----
 
 # Vector
+# (vectorized approach)
 
+
+c("Supersix Evo Black Inc.", "Supersix Evo Hi-Mod Team") %>% 
+    # str_detect returns true/false boolean, good to use with filter(), case_when()
+    str_detect(pattern = "Supersix") 
+
+# Pro Tip: Any vectorized function can be used inside mutate()
 
 # Tibble
-
-
+bikes_tbl %>%
+    select(model) %>%
+    # add true/false boolean flag, then convert to 1 or 0
+    mutate(supersix = model %>% str_detect("Supersix") %>% as.numeric()) %>%
+    mutate(black = model %>% str_detect("Black") %>% as.numeric()) 
+    
+# Note: building flags of true/false, 1/0 is "feature engineering" with text data
 
 # 1.2 Case & Concatenation ----
 
