@@ -167,3 +167,29 @@ bike_orderlines_colnames_tbl %>%
 # 2.0 Feature Engineering with Text -----
 # Investigating "model" and extracting well-formatted features
 
+# Feature engineering is a pre-cursor to (statistical) MODELING 
+# Once you develop "flags" they become variables (like gender) and you can see their effects on the outcome
+
+# Things to look for (possible Feature Engineering):
+# - Repeated Information: pieces in model name to turn into 'flags'
+# - Data issues: things that need cleaning
+
+
+bikes_tbl %>%
+  select(model) %>%
+  # fix typo on row 14 CAAD
+  mutate(model = case_when(
+    model == "CAAD Disc Ultegra" ~ "CAAD12 Disc Ultegra",
+    TRUE ~ model
+  )) %>%
+  
+  # separate using spaces - spread features out (makes ure last column is NA)
+  separate(col    = model, 
+           into   = str_c("model_", 1:7), 
+           sep    = " ", 
+           remove = FALSE, 
+           fill   = "right") %>%
+  view()
+  
+# Pro Tip: The "model_" gets recycled when comining with sequence 1:7 in str_c()
+# useful to quickly make a character vector of repetitive column names
