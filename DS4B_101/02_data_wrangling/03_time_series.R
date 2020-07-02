@@ -305,5 +305,22 @@ bike_sales_m_tbl %>%
 
 # 6.0 Filtering Date Ranges ---- 
 
+# Filter between() two dates
 
+bike_orderlines_tbl %>%
+    # over write order_date to get date format (not dttm)
+    mutate(order_date = ymd(order_date)) %>%
+    # filter
+    filter(order_date %>% between(left = ymd("2012-01-01"), right = ymd("2013-12-31"))) %>%
+    tail()
+
+# Pro Tip: filter() performs intermediate calculations. 
+# As long as calculations return a TRUE / FALSE vector, you can use to to filter rows
+
+# another way to do the same thing above
+bike_orderlines_tbl %>%
+    # over write order_date to get date format (not dttm)
+    mutate(order_date = ymd(order_date)) %>%
+    # filter by grabing year() of order_date, which includes 2012, 2013
+    filter(year(order_date ) %in% c(2012, 2013))
 
