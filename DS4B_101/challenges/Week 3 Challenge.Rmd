@@ -102,25 +102,52 @@ bike_orderlines_tbl %>%
 
 Evaluate "Black Inc". _What does this tell us about the "Black Inc" feature?_
 
-```{r}
+Black Inc features generate more income than the median product line. 
 
+```{r}
+bike_orderlines_tbl %>%
+    select(model, total_price) %>%
+    mutate(black = model %>% str_to_lower() %>% str_detect("black inc") %>% as.numeric()) %>%
+    group_by(black) %>%
+    summarize(median_orderline = median(total_price)) %>%
+    ungroup() %>%
+    mutate(median_orderline = median_orderline %>% scales::dollar(largest_with_cents = 1e+5)) %>%
+    rename("Black Inc" = black)
     
     
 ```
 
 Evaluate "Ultegra". _What does this tell us about the "Ultegra" feature?_
 
+Ultegra's generate just as much as the median sales. 
 ```{r}
+bike_orderlines_tbl %>%
+    select(model, total_price) %>%
+    mutate(ultegra = model %>% str_to_lower() %>% str_detect("ultegra") %>% as.numeric()) %>%
+    group_by(ultegra) %>%
+    summarize(median_orderline = median(total_price)) %>%
+    ungroup() %>%
+    mutate(median_orderline = median_orderline %>% scales::dollar(largest_with_cents = 1e+5)) %>%
+    rename("Ultegra" = ultegra)
 
-    
+        
     
 ```
 
 
 Evaluate "Disc" option. _What does this tell us about the "Disc" feature?_
 
-```{r}
+Disc' are below average when it comes to generating sales. 
 
+```{r}
+bike_orderlines_tbl %>%
+    select(model, total_price) %>%
+    mutate(disc = model %>% str_to_lower() %>% str_detect("disc") %>% as.numeric()) %>%
+    group_by(disc) %>%
+    summarize(median_orderline = median(total_price)) %>%
+    ungroup() %>%
+    mutate(median_orderline = median_orderline %>% scales::dollar(largest_with_cents = 1e+5)) %>%
+    rename("Disc" = disc)
 
 ```
 
@@ -141,7 +168,25 @@ Evaluate "Disc" option. _What does this tell us about the "Disc" feature?_
 _What does this tell us about how bikes are priced?_
 
 ```{r}
-
+bike_orderlines_tbl %>%
+    select(category_1, category_2, model, price) %>%
+    # separate first
+    separate(col = model, into = str_c("model_", 1:7), sep = " ", remove = FALSE, fill = "right") %>%
+    
+    mutate(model_base = case_when(
+        str_detect(str_to_lower(model), "beast") ~ str_c(model_1, model_2, model_3, model_4, sep = " "),
+        str_detect(str_to_lower(model_1), "supersix") ~ str_c(model_1, model_2, sep = " "),
+        str_detect(str_to_lower(model_1), "fat") ~ str_c(model_1, model_2, sep = " "),
+        str_detect(str_to_lower(model_1), "bad") ~ str_c(model_1, model_2, sep = " "),
+        str_detect(str_to_lower(model_2), "29") ~ str_c(model_1, model_2, sep = " "),
+        str_detect(str_to_lower(model_2), "carbon") ~ str_c(model_1, model_2, sep = " "),
+        str_detect(str_to_lower(model_2), "ultegra") ~ str_c(model_1, model_2, sep = " "),
+        str_detect(str_to_lower(model_2), "black") ~ str_c(model_1, model_2, sep = " "),
+        str_detect(str_to_lower(model_2), "red") ~ str_c(model_1, model_2, sep = " "),
+        str_detect(str_to_lower(model_2), "disc") ~ str_c(model_1, model_2, sep = " "),
+        str_detect(str_to_lower(model_2), "hi-mod") ~ str_c(model_1, model_2, sep = " ")
+    )) %>% view()
+    
  
 ```
 
