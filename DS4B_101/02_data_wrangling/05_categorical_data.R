@@ -107,14 +107,37 @@ sales_by_cat_2_tbl %>%
 
 # 3.3 Reording Factors: fct_reorder() and fct_rev() ----
 
-
+sales_by_cat_2_tbl %>%
+    arrange(desc(sales)) %>%
+    mutate(sales_negative = -sales) %>%
+    mutate(category_2 = category_2 %>% fct_reorder(sales_negative),
+           values = category_2 %>% as.numeric()) %>%
+    plot_sales()
 
 
 
 # 3.4 Time-Based Reordering: fct_reorder2() ----
+sales_by_cat_2_q_tbl <- bike_orderlines_tbl %>%
+    mutate(order_date = order_date %>% floor_date("quarter") %>% ymd()) %>%
+    
+    group_by(category_2, order_date) %>%
+    summarize(sales = sum(total_price)) %>%
+    ungroup()
 
+sales_by_cat_2_q_tbl
 
-
+sales_by_cat_2_q_tbl %>%
+    # time-based factor reordering using fct_reorder2
+    mutate(category_2 = category_2 %>% fct_reorder2(order_date, sales)) %>%
+    
+    ggplot(aes(x = order_date, y = sales, color = category_2)) +
+    geom_point() + 
+    geom_line() +
+    facet_wrap(~ category_2) +
+    
+    theme_tq() +
+    scale_color_tq() +
+    scale_y_continuous(labels = scales::dollar_format(scale = 1e-6, suffix = "M"))
 
 
 # 3.5 Creating "Other" Category - fct_lump() & fct_shift() ----
