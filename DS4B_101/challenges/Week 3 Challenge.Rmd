@@ -52,7 +52,7 @@ bike_orderlines_tbl <- read_rds(path_bike_orderlines) %>%
         model == "Syapse Carbon Tiagra" ~ "Synapse Carbon Tiagra",
         model == "Supersix Evo Hi-Mod Utegra" ~ "Supersix Evo Hi-Mod Ultegra",
         TRUE ~ model
-    ))
+    )) %>% view()
 
 glimpse(bike_orderlines_tbl)
 ```
@@ -73,8 +73,18 @@ glimpse(bike_orderlines_tbl)
 
 _What does this tell us about a time of year to focus marketing efforts?_
 
-```{r}
+Need better marketing focus around the holiday season; Nov and Dec are relatively low. 
 
+```{r}
+bike_orderlines_tbl %>%
+    select(order_date, total_price) %>%
+    mutate(month = ymd(order_date) %>% month(label = TRUE)) %>%
+    group_by(month) %>%
+    summarize(sales = sum(total_price)) %>%
+    ungroup() %>%
+    arrange(month) %>%
+    mutate(sales = sales %>% scales::dollar()) %>%
+    set_names(names(.) %>% str_to_title())
 
 
 ```
