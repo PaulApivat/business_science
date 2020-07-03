@@ -197,7 +197,23 @@ bike_orderlines_tbl %>%
         str_detect(str_to_lower(model_2), "6") ~ str_c(model_1, model_2, sep = " "),
         str_detect(str_to_lower(model_2), "race") ~ str_c(model_1, model_2, sep = " "),
         str_detect(str_to_lower(model_2), "rival") ~ str_c(model_1, model_2, sep = " ")
-    )) %>% view()
+    )) %>% 
+    select(-matches("model_[0-9]")) %>%
+    group_by(model_base) %>%
+    summarize(
+        mean = mean(price),
+        min = min(price),
+        max = max(price)
+    ) %>%
+    ungroup() %>%
+    arrange(desc(mean)) %>%
+    mutate(
+        mean = mean %>% scales::dollar(largest_with_cents = 1e+5),
+        min = min %>% scales::dollar(largest_with_cents = 1e+5),
+        max = max %>% scales::dollar(largest_with_cents = 1e+5)
+    ) %>%
+    set_names(names(.) %>% str_to_title()) 
+   
     
  
 ```
