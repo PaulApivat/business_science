@@ -34,6 +34,7 @@ sales_by_cat_2_tbl <- bike_orderlines_tbl %>%
     arrange(desc(sales)) %>%
     mutate(category_2 = category_2 %>% as_factor() %>% fct_rev())
 
+# Plotting
 sales_by_cat_2_tbl %>%
     ggplot(aes(x = sales, y = category_2)) + 
     geom_point(size = 5, color = "#2c3e50") +
@@ -42,6 +43,20 @@ sales_by_cat_2_tbl %>%
     theme_tq() +
     expand_limits(x = 0)
 
+# create plot_sales function from ggplot settings
+plot_sales <- function(data){
+    data %>%
+        ggplot(aes(x = sales, y = category_2)) + 
+        geom_point(size = 5, color = "#2c3e50") +
+        labs(title = "Sales by Category 2") +
+        scale_x_continuous(labels = scales::dollar_format()) +
+        theme_tq() +
+        expand_limits(x = 0)
+}
+
+# pipe dataframe into global function
+sales_by_cat_2_tbl %>%
+    plot_sales()
 
 # Alternative reorder of factor within ggplot
     #ggplot(aes(x = sales, y = reorder(category_2, sales))) + geom_point(size = 5)
