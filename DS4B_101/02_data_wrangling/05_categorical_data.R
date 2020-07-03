@@ -61,7 +61,6 @@ sales_by_cat_2_tbl %>%
 # Alternative reorder of factor within ggplot
     #ggplot(aes(x = sales, y = reorder(category_2, sales))) + geom_point(size = 5)
 
-# Plotting
 
 
 
@@ -71,15 +70,38 @@ sales_by_cat_2_tbl %>%
 # 3.1 Inspecting Factors ----
 
 # Vector
+sales_by_cat_2_tbl %>% pull(category_2) %>% levels()
 
+sales_by_cat_2_tbl %>% pull(category_2) %>% as.numeric()
 
 # Tibble
+
+# NOTE: Working with Factors
+# as.character() retrieves text
+# as.numeric() retrieves value
+
+# Factors contain both label and value (levels, hidden)
+sales_by_cat_2_tbl %>%
+    mutate(category_2 = category_2 %>% fct_rev() %>% fct_rev()) %>%
+    mutate(
+        label = category_2 %>% as.character(),
+        value = category_2 %>% as.numeric()
+    )
+
 
 
 
 # 3.2 Creating Factors: as_factor() vs as.factor() ----
 
+# as_factor() forcats package - assign factor values base on order in vector (good for visualization)
+# as.factor() base-R          - assign factor values base on alphabetical order in factor (NOT helpful for visualization)
 
+sales_by_cat_2_tbl %>%
+    mutate(
+        category_2 = as.character(category_2),
+        category_2_as_factor = as_factor(category_2) %>% as.numeric(),
+        category_2_as.factor = as.factor(category_2) %>% as.numeric()
+    )
 
 
 
