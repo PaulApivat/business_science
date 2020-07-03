@@ -4,7 +4,7 @@
 library(tidyverse)
 library(tidyquant)
 
-bike_orderlines_tbl <- read_rds("00_data/bike_sales/data_wrangled/bike_orderlines.rds")
+bike_orderlines_tbl <- read_rds("../00_data/bike_sales/data_wrangled/bike_orderlines.rds")
 
 bike_orderlines_tbl
 
@@ -24,7 +24,27 @@ bike_orderlines_tbl
 # 2.0 Motivating Example -----
 
 # Manipulation
+sales_by_cat_2_tbl <- bike_orderlines_tbl %>%
+    select(category_2, total_price) %>%
+    
+    group_by(category_2) %>%
+    summarize(sales = sum(total_price)) %>%
+    ungroup() %>%
+    
+    arrange(desc(sales)) %>%
+    mutate(category_2 = category_2 %>% as_factor() %>% fct_rev())
 
+sales_by_cat_2_tbl %>%
+    ggplot(aes(x = sales, y = category_2)) + 
+    geom_point(size = 5, color = "#2c3e50") +
+    labs(title = "Sales by Category 2") +
+    scale_x_continuous(labels = scales::dollar_format()) +
+    theme_tq() +
+    expand_limits(x = 0)
+
+
+# Alternative reorder of factor within ggplot
+    #ggplot(aes(x = sales, y = reorder(category_2, sales))) + geom_point(size = 5)
 
 # Plotting
 
