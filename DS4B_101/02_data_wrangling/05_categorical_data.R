@@ -140,9 +140,19 @@ sales_by_cat_2_q_tbl %>%
     scale_y_continuous(labels = scales::dollar_format(scale = 1e-6, suffix = "M"))
 
 
-# 3.5 Creating "Other" Category - fct_lump() & fct_shift() ----
+# 3.5 Creating "Other" Category - fct_lump() & fct_relevel() ----
 
-
+sales_by_cat_2_tbl %>%
+    # use fct_lump() to create "other" category
+    mutate(category_2 = category_2 %>% fct_lump(n = 6, 
+                                                w = sales, 
+                                                other_level = "All Other Bike Categories")) %>%
+    
+    group_by(category_2) %>%
+    summarize(sales = sum(sales)) %>%
+    
+    mutate (category_2 = category_2 %>% fct_relevel("All Other Bike Categories", after = 0)) %>%
+    plot_sales()
 
 
 
