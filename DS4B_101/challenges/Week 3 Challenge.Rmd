@@ -73,12 +73,16 @@ glimpse(bike_orderlines_tbl)
 
 _What does this tell us about a time of year to focus marketing efforts?_
 
-Need better marketing focus around the holiday season; Nov and Dec are relatively low. 
+Need better marketing focus around the holiday season; Nov and Dec are relatively low. This appears to be cyclical business - busy times are from March - July. 
 
 ```{r}
 bike_orderlines_tbl %>%
+    # select relevant columns
     select(order_date, total_price) %>%
-    mutate(month = ymd(order_date) %>% month(label = TRUE)) %>%
+    # add month column
+    # alternative: mutate(month = month(order_date, label = TRUE, abbr = FALSE )) %>%
+    mutate(month = ymd(order_date) %>% month(label = TRUE, abbr = FALSE)) %>%
+    # group by, summarize, ungroup
     group_by(month) %>%
     summarize(sales = sum(total_price)) %>%
     ungroup() %>%
@@ -86,6 +90,9 @@ bike_orderlines_tbl %>%
     mutate(sales = sales %>% scales::dollar()) %>%
     set_names(names(.) %>% str_to_title())
 
+# Alternate methods
+# rename(Month = month, Sales = sales)
+# rename_all(~ str_to_title(.))
 
 ```
 
@@ -102,7 +109,7 @@ bike_orderlines_tbl %>%
 
 Evaluate "Black Inc". _What does this tell us about the "Black Inc" feature?_
 
-Black Inc features generate more income than the median product line. 
+Black Inc features generate more income than the median product line. They are a higher dollar value - people are willing to spend more for Black Inc. 
 
 ```{r}
 bike_orderlines_tbl %>%
@@ -111,24 +118,31 @@ bike_orderlines_tbl %>%
     group_by(black) %>%
     summarize(median_orderline = median(total_price)) %>%
     ungroup() %>%
-    mutate(median_orderline = median_orderline %>% scales::dollar(largest_with_cents = 1e+5)) %>%
-    rename("Black Inc" = black)
+    mutate(median_orderline = median_orderline %>% scales::dollar(largest_with_cents = 10)) %>%
+    rename(
+        `Black Inc` = black,
+        `Median Orderline` = median_orderline
+        )
     
     
 ```
 
 Evaluate "Ultegra". _What does this tell us about the "Ultegra" feature?_
 
-Ultegra's generate just as much as the median sales. 
+Ultegra's generate just as much as the median sales. Ultegra - middle of the road package. 
 ```{r}
+
 bike_orderlines_tbl %>%
     select(model, total_price) %>%
-    mutate(ultegra = model %>% str_to_lower() %>% str_detect("ultegra") %>% as.numeric()) %>%
+    mutate(ultegra = model %>% str_to_lower() %>% str_detect("ultegra")) %>%
     group_by(ultegra) %>%
     summarize(median_orderline = median(total_price)) %>%
     ungroup() %>%
-    mutate(median_orderline = median_orderline %>% scales::dollar(largest_with_cents = 1e+5)) %>%
-    rename("Ultegra" = ultegra)
+    mutate(median_orderline = median_orderline %>% scales::dollar(largest_with_cents = 10)) %>%
+    rename(
+        `Ultegra` = ultegra,
+        `Median Orderline` = median_orderline
+        )
 
         
     
@@ -137,17 +151,21 @@ bike_orderlines_tbl %>%
 
 Evaluate "Disc" option. _What does this tell us about the "Disc" feature?_
 
-Disc' are below average when it comes to generating sales. 
+Disc' are below average when it comes to generating sales. Even though the Disc models are more expensive.
+This suggest Disc is not a good feature.
 
 ```{r}
 bike_orderlines_tbl %>%
     select(model, total_price) %>%
-    mutate(disc = model %>% str_to_lower() %>% str_detect("disc") %>% as.numeric()) %>%
+    mutate(disc = model %>% str_to_lower() %>% str_detect("disc")) %>%
     group_by(disc) %>%
     summarize(median_orderline = median(total_price)) %>%
     ungroup() %>%
     mutate(median_orderline = median_orderline %>% scales::dollar(largest_with_cents = 1e+5)) %>%
-    rename("Disc" = disc)
+    rename(
+        "Disc" = disc,
+        `Median_Orderline` = median_orderline
+        )
 
 ```
 
@@ -167,6 +185,7 @@ bike_orderlines_tbl %>%
 
 _What does this tell us about how bikes are priced?_
 
+On average, the three highest income generators are Scalpel-Si Black, Habit Hi-Mod, F-Si Black.
 ```{r}
 bike_orderlines_tbl %>%
     select(category_1, category_2, model, price) %>%
@@ -218,6 +237,64 @@ bike_orderlines_tbl %>%
  
 ```
 
+# RE-DO stringr: What are the average, min, and max prices by Base Model? (Difficulty = High)
 
+```{r}
+bike_orderlines_tbl %>%
+    # select distinct category_1, category_2, model, and price
+    distinct(category_1, category_2, model, price) %>%
+    # separate models
+    separate(col = model,
+             into = str_c("model_", 1:7),
+             sep = " ",
+             remove = FALSE,
+             fill = "right") %>%
+    # creating a 'base' feature
+    mutate(model_base = case_when(
+        # fix supersix evo
+        str_detect(str_to_lower(model_1), "supersix") ~ str_c(model_1, model_2, sep = " "),
+        # fix Fat CAAD bikes
+        str_detect(str_to_lower(model_1), "fat") ~ str_c(model_1, model_2, sep = " "),
+        # fix Beast of the East
+        str_detect(str_to_lower(model), "beast") ~ str_c(model_1, model_2, model_3, model_4, sep = " "),
+        # fix Bad Habit
+        str_detect(str_to_lower(model_1), "bad") ~ str_c(model_1, model_2, sep = " "),
+        # fix Scalpel 29
+        str_detect(str_to_lower(model_2), "29") ~ str_c(model_1, model_2, sep = " "),
+        # catch all
+        TRUE ~ model_1
+    )) %>%
+    # Remove unnecessary columns need to include model_ so category_1 and category_2 are untouched
+    # alternative select(-(model_1:model_7))
+    select(-matches("model_[0-9]")) %>%
+    
+    # Group by, summarize, ungroup
+    group_by(category_1, category_2, model_base) %>%
+    summarize(
+        mean_price = mean(price),
+        min_price = min(price),
+        max_price = max(price)
+    ) %>%
+    ungroup() %>%
+    # arrange descending by mean price
+    arrange(desc(mean_price)) %>%
+    # format dollar
+    # Alternate advanced technique (shorter method) format dollar
+    # mutate_if(is.numeric, ~ scales::dollar(., largest_with_cents = 10))
+    mutate(
+        mean_price = mean_price %>% scales::dollar(largest_with_cents = 10),
+        min_price = min_price %>% scales::dollar(largest_with_cents = 10),
+        max_price = max_price %>% scales::dollar(largest_with_cents = 10)
+    ) %>%
+    # Adjust column names
+    # Advanced technique
+    # rename_all(~ str_replace(., "_", " ") %>% str_to_title())
+    set_names(names(.) %>% str_replace("_", " ") %>% str_to_title())
+    
+    # get "tier" feature (replace model_base with " ")
+    #mutate(model_tier = model %>% str_replace(model_base, replacement = "") %>% str_trim()) %>%
+    
+    
+```
 
 
