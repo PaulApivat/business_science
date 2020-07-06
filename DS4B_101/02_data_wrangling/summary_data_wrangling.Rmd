@@ -1,0 +1,163 @@
+---
+title: "summary_data_wrangling"
+author: "Paul Apivat Hanvongse"
+date: "7/6/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data Wrangling Summary
+
+This file wraps up Week 3 of DS4B 101 on Data Wrangling Foundations. Here is a summary of key learning from this week, which covers time-series, text and categorical data. 
+
+## Time Series
+
+I had used the `lubridate` package before to handle dates, but this week we explore in greater depth, very cool features of the package. When dealing with dates, we'll want to be able to visualize dates on the x-axis. To do this, we must convert to yyyy-mm-dd say that we can **extract** either month or year. 
+
+Alternatively, if year and month are in separate columns, we'll want to combine then into `year_month`, otherwise, the visualization is not as informative. See also this [mini-thread](https://twitter.com/paulapivat/status/1278568970283413506?s=20).
+
+We also cover cumulative calculations and rolling calculations (i.e., 3 month moving averages)
+
+```{r echo=FALSE}
+library(lubridate)
+library(tidyverse)
+
+## Step 1: conversions to YYYY-MM-DD
+## As long as you specify the order, you can pretty much convert any date format 
+## use either mdy(), ymd() or dmy()
+
+"08*14*2019" %>% mdy()
+"08*14/2019" %>% mdy()
+"Aug14th2019" %>% mdy()
+"August14th2019" %>% mdy()
+"August 14th2019" %>% mdy()
+"1999.2.17" %>% ymd()
+"5 Apr, 1990" %>% dmy()
+
+# Step2: Extracting Year or Month
+"2011-Jan-01" %>% ymd() %>% year()
+"2011-Jan-01" %>% ymd() %>% month(label = TRUE, abbr = FALSE)
+
+# Alternatively, if Year and Month are in separate columns
+# Need to wrangle data into yyyy-mm-dd format before plotting
+str(airquality)
+
+# select relevant columns, save to new data frame
+# NOTE: airquality2
+airquality2 <- airquality %>%
+    select(Month, Day, Temp) 
+
+# Fill new column YEAR with years between 2010-2020, randomly, but fill all rows
+airquality2$Year <- sample(2010:2020, size = nrow(airquality2), replace = TRUE)
+
+airquality2 %>%
+    # turn each integer column into character
+    mutate(
+        Year = as.character(Year),
+        Month = as.character(Month),
+        Day = as.character(Day)
+    ) %>%
+    # need to combine year and month into year_month
+    mutate(year_month = paste(Year, Month, Day)) %>%
+    mutate(year_month = year_month %>% ymd()) %>%
+    # plot temperature trend over 10-year period
+    ggplot(aes(x=year_month, y=Temp)) + 
+    geom_line() + 
+    geom_smooth(method = "lm", se = FALSE)
+
+
+# Cumulative Calculations of Sales Percentage
+
+df %>% 
+    # cumsum() function gets cumulative sales, divided by sum(sales) for a percentage
+    mutate(cumulative_sales_pct = scales::percent(cumsum(sales)/sum(sales)))
+
+# Rolling Averages
+df %>%
+    # rollmean() requires input necessary arguments, k, na.pad = TRUE
+    # rollmean() centers value by default, we want align = "right" (not left), fill = 0
+    mutate(roll_mean_3 = rollmean(sales, k = 3, na.pad = TRUE, align = "right", fill = NA)) %>%
+    mutate(roll_mean_6 = rollmean(sales, k = 6, na.pad = TRUE, align = "right", fill = NA))
+
+```
+
+## Text
+
+There are numerous `dplyr` functions that help us efficiently deal with character (string) data. Here's a sampler of some functions covered. The biggest take-away was using `dplyr` to create flags out of detecting certain string patterns.
+
+Finally we did 'feature engineering'. I suspect we'll revisit feature engineering once we get more into Machine Learning packages, so we'll save that for then. 
+
+```{r echo=FALSE}
+
+# Creating Flags based on Text Patterns, str_detect()
+iris %>%
+    # selecting a column
+    select(Species) %>%
+    # add true/false boolean flag by str_detect(), then convert to 1 or 0 with as.numeric()
+    mutate(species_flag = Species %>% str_detect("setosa") %>% as.numeric())
+
+iris
+
+# str_glue() to concatenate variables objects and strings
+iris %>%
+    select(Sepal.Length, Petal.Length, Species) %>%
+    mutate(flower_statement = str_glue(
+        "The {Species} species, has a Sepal Length of {Sepal.Length} and a Petal Length of {Petal.Length}"
+    ) %>% as.character()) 
+
+# trim space within strings (can also do 'left' or 'right')
+" text with spaces  " %>% str_trim(side = "both")
+
+# str_replace_all() to get rid of certain characters
+c("CAAD12", "CAAD", "CAAD8") %>% str_replace_all(pattern = "[0-9]", replacement = "")
+
+# changing column names
+mtcars %>%
+    set_names(names(.) %>% str_to_title)
+    
+# Appending text to column names
+mtcars %>%
+  set_names(str_glue("{names(.)}_part"))
+
+# Appending text to specific column names
+mtcars %>%
+  rename_at(.vars = vars(disp:qsec),
+            # all .vars gets passed to '.' below (so prod_ goes in front)
+            .funs = ~ str_c("prod_", .)) %>%
+  rename_at(.vars = vars(vs:carb),
+            .funs = ~ str_c("cust_", .)) 
+
+```
+
+## Categorical Data
+
+Featuring engineering is one of those terms you hear thrown around in the context of Machine Learning. This week, we got a very practical introduction to feature engineering or, the art of deriving additional data from existing data. 
+
+```{r}
+str(iris)
+
+# pull out factor levels from Species column
+# pull out levels as numeric
+iris %>% pull(Species) %>% levels()
+iris %>% pull(Species) %>% as.numeric()
+
+# Factors contain both label and value (levels, hidden)
+# create two columns to show lable and value - use fct_rev() to reverse order
+iris %>%
+    mutate(Species = Species %>% fct_rev()) %>%
+    mutate(
+        label = Species %>% as.character(),
+        value = Species %>% as.numeric()
+    )
+
+# Time-Based Reordering: fct_reorder2()
+airquality2
+
+
+```
+
+
+
