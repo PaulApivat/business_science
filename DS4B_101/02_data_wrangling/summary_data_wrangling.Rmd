@@ -154,7 +154,24 @@ iris %>%
     )
 
 # Time-Based Reordering: fct_reorder2()
-airquality2
+airquality2 %>%
+    # turn each integer column into character
+    mutate(
+        Year = as.character(Year),
+        Month = as.character(Month),
+        Day = as.character(Day)
+    ) %>%
+    # need to combine year and month into year_month
+    mutate(year_month = paste(Year, Month, Day)) %>%
+    mutate(year_month = year_month %>% ymd()) %>%
+    # group_by summarize
+    group_by(Temp, year_month) %>%
+    summarize(avg_temp = mean(Temp)) %>%
+    ungroup() %>%
+    arrange(year_month)
+
+
+
 
 
 ```
