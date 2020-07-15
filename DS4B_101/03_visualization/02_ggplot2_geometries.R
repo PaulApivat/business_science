@@ -84,11 +84,29 @@ revenue_by_month_tbl %>%
 
 # Data Manipulation
 
+revenue_by_category2_tbl <- bike_orderlines_tbl %>% 
+    
+    select(category_2, total_price) %>%
+    
+    group_by(category_2) %>%
+    summarize(revenue = sum(total_price)) %>%
+    ungroup() 
+    
+    
 
 # Bar Plot
+revenue_by_category2_tbl %>%
+    # turn category_2 into a factor, then re-order
+    mutate(category_2 = category_2 %>% as_factor() %>% fct_reorder(revenue)) %>%
+    ggplot(aes(x=category_2, y=revenue)) + 
+    geom_col(fill = 'dodgerblue') + 
+    coord_flip()
 
 
-
+# my solution
+revenue_by_category2_tbl %>%
+    ggplot(aes(x=revenue, y=reorder(category_2, revenue))) +
+    geom_bar(stat = 'identity')
 
 
 
