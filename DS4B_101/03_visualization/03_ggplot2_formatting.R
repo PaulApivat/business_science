@@ -109,7 +109,7 @@ viridisLite::viridis(n = 30)
 
 sales_by_year_category_2_tbl %>%
     # asthetic mapping done globally 
-    ggplot(aes(x=year, y=revenue, color = category_2)) +
+    ggplot(aes(x=year, y=revenue, color=category_2)) +
     geom_line() +
     geom_point()
 
