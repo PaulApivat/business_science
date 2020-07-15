@@ -49,8 +49,30 @@ order_value_tbl %>%
 
 # Data Manipulation
 
+revenue_by_month_tbl <- bike_orderlines_tbl %>% 
+    
+    select(order_date, total_price) %>%
+    # key for this time-series line chart is converting timestamp into date w/
+    # floor_date() and ymd()
+    mutate(year_month = floor_date(x = order_date, "months") %>% ymd()) %>%
+    
+    group_by(year_month) %>%
+    summarize(revenue = sum(total_price)) %>%
+    ungroup() 
+
 
 # Line Plot
+revenue_by_month_tbl %>%
+    
+    ggplot(aes(x=year_month, y=revenue)) +
+    geom_line(size = 0.5, linetype = 1) +
+    geom_smooth(method = "loess", span = 0.2)
+
+
+
+## Pro Tip: use help documentation, you can drill into the algorithm parameters
+## find out which parameters can be adjusted.
+
 
 
 
