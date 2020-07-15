@@ -37,8 +37,8 @@ g <- revenue_by_year_tbl %>%
     geom_point(size = 5) +
     geom_smooth(method = "lm", se = FALSE) +
     
-    # Formatting
-    expand_limits(y = 0) +
+    # Formatting ($20 million = 20e6)
+    expand_limits(y = c(0, 20e6)) +
     scale_color_continuous(low = "red", high = "black",
                            labels = scales::dollar_format(scale = 1/1e6, suffix = "M")) +
     scale_y_continuous(labels = scales::dollar_format(scale = 1/1e6, suffix = "M")) +
@@ -51,6 +51,7 @@ g <- revenue_by_year_tbl %>%
         caption = "What's happening?\nSales numbers showing year-over-year growth."
     ) +
     theme_bw() +
+    # alternative legend.position = "right", legend.direction = "vertical"
     theme(legend.position = "right", legend.direction = "vertical")
 
 # 1.2 What is a ggplot? ----
