@@ -38,12 +38,19 @@ sales_by_year_category_2_tbl %>%
 # Named Colors
 colors()
 
-# can use RBG or HEX or Color
+# can use RBG or HEX or Color or even Color Brewer
 sales_by_year_category_2_tbl %>%
     ggplot(aes(x=year, y=revenue)) +
-    geom_col(fill="springgreen3")
+    #geom_col(fill="springgreen3")
+    
+    # grab specific RGB
     #geom_col(fill=rgb(44, 62, 80, maxColorValue = 255))
+    
+    # grab Blues palette, pick 6th color
+    #geom_col(fill=RColorBrewer::brewer.pal(n = 9, name = 'Blues')[6])
 
+    # grab specific color from Viridis palette
+    geom_col(fill=viridisLite::viridis(n = 30)[15])
 
 # To RGB
 # Red Green Blue
@@ -63,12 +70,34 @@ rgb(44, 62, 80, maxColorValue = 255)
 # 1.2 Color Palettes ----
 
 # tidyquant
+tidyquant::palette_light()
 
+# character vector
+palette_light()[2]
+
+# convert palette light to rgb
+palette_light()[7] %>% col2rgb()
 
 # Brewer
+# primarily for discrete data
 
+# display all Brewer colors
+RColorBrewer::display.brewer.all()
+
+# get information on all Brewer color palettes
+# (divergent, qualitative, sequential etc)
+RColorBrewer::brewer.pal.info
+
+# will provide HEX for all palettes in Brewer
+RColorBrewer::brewer.pal(n = 9, name = 'Blues')
+
+# turn individual HEX into RGB, for Brewer
+RColorBrewer::brewer.pal(n = 9, name = 'Blues')[2] %>% col2rgb()
 
 # Viridis
+
+# get a number of viridis colors
+viridisLite::viridis(n = 30)
 
 
 
