@@ -147,6 +147,15 @@ bike_orderlines_tbl %>%
 
 
 # Density
+bike_orderlines_tbl %>%
+    # find all distinct model, frame_material and respective prices
+    distinct(price, model, frame_material) %>%
+    # nothing on y-axis because univariate visualization
+    ggplot(aes(price, fill = frame_material)) +
+    geom_density(alpha = 0.5) +
+    scale_fill_tq() +
+    theme_tq() +
+    theme(legend.position = "bottom")
 
 
 
