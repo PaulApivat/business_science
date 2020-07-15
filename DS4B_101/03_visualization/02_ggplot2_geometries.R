@@ -223,10 +223,21 @@ revenue_by_year_tbl %>%
     #mutate(revenue_text = scales::dollar(revenue, scale = 1e-6, suffix = "M")) %>%
     ggplot(aes(year, revenue)) +
     geom_col(fill = "#2c3e50") +
+    geom_smooth(method = 'lm', se = FALSE) + 
     geom_text(aes(label = scales::dollar(revenue, scale = 1e-6, suffix = "M")), 
               vjust = 1.5, color = 'white') +
     # bar chart gets too close to top
     # stretch out y-axis
+    geom_label(aes(label = "Major Demand This Year"), 
+               vjust = -0.5,
+               size = 5,
+               fill = "#1f78b4",
+               color = "white",
+               fontface = "bold",
+               # can use data argument to pull in text from the dataset
+               data = revenue_by_year_tbl %>%
+                   # filter by two or more years
+                   filter(year %in% c(2013))) +
     expand_limits(y = 2e7) +
     
     theme_tq()
