@@ -163,13 +163,25 @@ bike_orderlines_tbl %>%
 # 5.0 Box Plot / Violin Plot ----
 # - Great for comparing distributions
 
-
 # Goal: Unit price of models, segmenting by category 2
 
 # Data Manipulation
 
+unit_price_by_cat_2_tbl <- bike_orderlines_tbl %>%
+    # can also do distinct(category_2, model, price)
+    select(category_2, model, price) %>% 
+    distinct() %>%
+    # alternative: mutate(category_2 = as_factor(category_2) %>% fct_reorder(price))
+    mutate(category_2  = category_2 %>% as_factor() %>% fct_reorder(price))
 
 # Box Plot
+unit_price_by_cat_2_tbl %>%
+    
+    ggplot(aes(x=category_2, y=price)) +
+    geom_boxplot() + 
+    coord_flip() +
+    theme_tq()
+
 
 
 # Violin Plot & Jitter Plot
