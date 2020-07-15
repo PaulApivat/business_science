@@ -59,3 +59,6 @@ g <- revenue_by_year_tbl %>%
 g
 
 View(g)
+
+## KEY CONCEPT: The ggplot object is just a list that captures layers, scales, 
+## mappings, theme, coordinates, and labels that you customize. 
