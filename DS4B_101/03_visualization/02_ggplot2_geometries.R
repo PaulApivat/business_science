@@ -186,7 +186,13 @@ unit_price_by_cat_2_tbl %>%
 
 # Violin Plot & Jitter Plot
 
-
+unit_price_by_cat_2_tbl %>%
+    ggplot(aes(category_2, price)) + 
+    # makes scatter plot with random noise
+    geom_jitter(width = 0.15, color = "#2c3e50") +
+    geom_violin(alpha = 0.5) +
+    coord_flip() +
+    theme_tq()
 
 
 
@@ -198,8 +204,34 @@ unit_price_by_cat_2_tbl %>%
 
 # Data Manipulation
 
+revenue_by_year_tbl <- bike_orderlines_tbl %>%
+    select(order_date, total_price) %>%
+    mutate(year = year(order_date)) %>%
+    
+    group_by(year) %>%
+    summarize(revenue = sum(total_price)) %>%
+    ungroup() 
+    
+    
+
 
 # Adding text to bar chart
+# NOTE: 2 ways to incorporate formatted text, new column or in geom_text
+
+revenue_by_year_tbl %>% 
+    # formatted dollar figures can be in own column
+    #mutate(revenue_text = scales::dollar(revenue, scale = 1e-6, suffix = "M")) %>%
+    ggplot(aes(year, revenue)) +
+    geom_col(fill = "#2c3e50") +
+    geom_text(aes(label = scales::dollar(revenue, scale = 1e-6, suffix = "M")), 
+              vjust = 1.5, color = 'white') +
+    # bar chart gets too close to top
+    # stretch out y-axis
+    expand_limits(y = 2e7) +
+    
+    theme_tq()
+
+
 
 
 # Filtering labels to highlight a point
