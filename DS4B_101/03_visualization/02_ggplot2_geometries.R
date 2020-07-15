@@ -123,7 +123,7 @@ bike_orderlines_tbl %>%
     # mapping only price, because this is a UNIvariate plot
     ggplot(aes(price)) +
     # use color to distinguish the bins
-    geom_histogram(bins = 25, fill = 'orange', color = "white")
+    geom_histogram(bins = 25, fill = 'orange', color = "white") 
 
 
 
@@ -131,6 +131,19 @@ bike_orderlines_tbl %>%
 
 # Goal: Unit price of bicylce, segmenting by frame material
 # Histogram
+
+bike_orderlines_tbl %>%
+    # find all distinct model, frame_material and respective prices
+    distinct(price, model, frame_material) %>%
+    # nothing on y-axis because univariate visualization
+    ggplot(aes(price, fill = frame_material)) +
+    
+    geom_histogram() +
+    # note: tilde, also ncol = 1 stack facet wrap ontop (instead of side-by-side)
+    facet_wrap(~ frame_material, ncol = 1) +
+    # scale_fill from tidyquant package
+    scale_fill_tq() +
+    theme_tq()
 
 
 # Density
