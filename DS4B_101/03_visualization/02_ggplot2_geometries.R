@@ -111,11 +111,22 @@ revenue_by_category2_tbl %>%
 
 
 # 4.0 Histogram / Density Plots ----
-# - Great for inspecting the distribution of a variable
+# - Great for inspecting the distribution of a CONTINUOUS variable
 
 
 # Goal: Unit price of bicycles
 # Histogram
+
+bike_orderlines_tbl %>%
+    
+    distinct(model, price) %>%
+    # mapping only price, because this is a UNIvariate plot
+    ggplot(aes(price)) +
+    # use color to distinguish the bins
+    geom_histogram(bins = 25, fill = 'orange', color = "white")
+
+
+
 
 
 # Goal: Unit price of bicylce, segmenting by frame material
