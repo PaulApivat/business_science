@@ -37,7 +37,9 @@ order_value_tbl <- bike_orderlines_tbl %>%
 
 order_value_tbl %>%
 
-    ggplot(aes(x = total_quantity, y = total_price)) + geom_point()
+    ggplot(aes(x = total_quantity, y = total_price)) + 
+    geom_point(alpha = 0.2, size = 2, shape = "triangle") +
+    geom_smooth(method = 'lm', se = FALSE, color = "red", linetype = "dashed", size = 1.5)
 
 
 # 2.0 Line Plots ----
