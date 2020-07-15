@@ -107,6 +107,26 @@ viridisLite::viridis(n = 30)
 # 2.1 Color  -----
 # - Used with line and points, Outlines of rectangular objects
 
+sales_by_year_category_2_tbl %>%
+    # asthetic mapping done globally 
+    ggplot(aes(x=year, y=revenue, color = category_2)) +
+    geom_line() +
+    geom_point()
+
+
+sales_by_year_category_2_tbl %>%
+    ggplot(aes(x=year, y=revenue)) +
+    # asthetic mapping done locally
+    # allows for customization
+    geom_line(aes(color = category_2), size = 1) +
+    # not need to use aes() unless you're mapping to a column (in the data)
+    geom_point(color = "dodgerblue", size = 5)
+
+# NOTE: "Tidy Data" is the same in ggplot2 and modeling
+# There's one column of interest (target column) and
+# there's another column to describe the target
+
+
 
 # Usine colors as aesthetics
 
