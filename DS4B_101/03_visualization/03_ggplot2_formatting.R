@@ -136,13 +136,46 @@ sales_by_year_category_2_tbl %>%
 # 2.2 Fill  -----
 # - Used with fill of rectangular objects 
 
+sales_by_year_category_2_tbl %>%
+    # aes mapping at global level
+    ggplot(aes(x=year, y=revenue, fill=category_2)) +
+    geom_col()
+
+
+sales_by_year_category_2_tbl %>%
+    ggplot(aes(x=year, y=revenue)) +
+    # aes mapping at local level
+    geom_col(aes(fill=category_2))
 
 
 # 2.3 Size ----
 # - Used with points
 
+# run aes() mapping locally in geom_line and geom_point
+# only point varies by revenue
+sales_by_year_category_2_tbl %>%
+    ggplot(aes(x=year, y=revenue)) +
+    geom_line(aes(color = category_2), size = 1) +
+    geom_point(aes(size = revenue), shape = 'triangle')
+
+# only need to be in aes() if tied to a column
+sales_by_year_category_2_tbl %>%
+    ggplot(aes(year, revenue)) +
+    # - NO aesthetic mapping - geom_line(size = 4)
+    geom_line(aes(size = year)) + 
+    geom_point(aes(color = revenue), size = 2)
 
 
+
+# run aes() mapping globally in ggplot
+# ggplot() aes() mapping can be fill, color or size
+# both point and line vary by revenue (because its globally)
+sales_by_year_category_2_tbl %>%
+    ggplot(aes(x=year, y=revenue, size = revenue)) +
+    geom_line(aes(color = category_2)) +
+    geom_point()
+
+?geom_point
 
 
 # 3.0 Faceting ----
@@ -150,7 +183,16 @@ sales_by_year_category_2_tbl %>%
 
 # Goal: Sales annual sales by category 2
 
-
+sales_by_year_category_2_tbl %>%
+    ggplot(aes(year, revenue, color = category_2)) +
+    geom_line(color = 'black') +
+    geom_smooth(method = 'lm', se = FALSE) +
+    # alternative ways to do facet_wrap
+    #facet_wrap(c('category_2'))
+    # ncol number of column; free_y frees up y-axis
+    facet_wrap(~ category_2, ncol = 3, scales = "free_y") +
+    # use expand_limits if you're using free_y
+    expand_limits(y = 0)
 
 
 # 4.0 Position Adjustments (Stack & Dodge) ----
