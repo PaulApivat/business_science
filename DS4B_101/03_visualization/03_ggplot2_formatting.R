@@ -378,9 +378,44 @@ g_facet_continuous +
 
 # 8.0 Putting It All Together ----
 
+# my solution
+g_area_discrete +
+    scale_y_continuous(label = scales::dollar_format()) +
+    scale_fill_brewer(palette = 'Blues', direction = -1) +
+    labs(
+        title = 'Sales Over Year by Category 2',
+        subtitle = 'Sales Trending Up',
+        caption = 'Bike sales trends look strong heading into 2016',
+        fill = '2nd Category',
+        y = 'Revenue',
+        x = ''
+    ) +
+    theme_minimal() +
+    theme(
+        axis.title.y = element_text(color = "#084594", face = 'bold'),
+        title = element_text(color = "#084594", face = 'bold')
+    )
 
-
-
+# Course solution
+sales_by_year_category_2_tbl %>%
+    ggplot(aes(x=year, y=revenue, fill=category_2)) +
+    geom_area(color = 'black') +
+    # use fill above, so needs scale_fill
+    scale_fill_brewer(palette = 'Blues', direction = -1) + 
+    scale_y_continuous(labels = scales::dollar_format()) +
+    # labels
+    labs(
+        title = 'Sales Over Year by Category 2',
+        subtitle = 'Sales Trending Upward',
+        caption = 'Bike sales trends look strong heading into 2016',
+        x = '',
+        y = 'Revenue ($M)',
+        fill = '2nd Category'
+    ) +
+    theme_light() +
+    theme(
+        title = element_text(color = "#084594", face = 'bold')
+    )
 
 
 
