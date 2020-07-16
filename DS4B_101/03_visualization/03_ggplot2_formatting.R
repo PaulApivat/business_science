@@ -318,16 +318,60 @@ g_area_discrete +
 
 # 5.3 Axis Scales ----
 
+# scale_y_continuous
+# scale_y_discrete
+# scale_x_continuous
+# scale_x_discrete
+# even...scale_x_date to work with 'date' data types
 
+sales_by_year_category_2_tbl
 
+g_facet_continuous +
+    # note scale_x_continuous because year is numeric
+    scale_x_continuous(breaks = seq(2011, 2015, by = 2)) +
+    scale_y_continuous(labels = scales::dollar_format(scale = 1e-6, suffix = 'M'))
 
 
 # 6.0 Labels ----
 
-
+g_facet_continuous +
+    scale_x_continuous(breaks = seq(2011, 2015, by = 2)) +
+    scale_y_continuous(labels = scales::dollar_format(scale = 1e-6, suffix = 'M')) +
+    
+    geom_smooth(method = 'lm', se = FALSE) +
+    scale_color_viridis_c() +
+    theme_dark() +
+    
+    labs(
+        title = "Bike Sales",
+        subtitle = "Sales are trending up",
+        caption = "5 year sales trend\ncomes from our ERP database",
+        x = 'Year',
+        y = 'Revenue ($M)',
+        color = "Revenue"
+    )
 
 
 # 7.0 Themes  ----
+
+g_facet_continuous +
+    # can start off with preset theme, like theme_light()
+    theme_light() +
+    theme(
+        axis.text.x = element_text(
+                        angle = 45, 
+                        hjust = 1,
+                    ),
+        strip.background = element_rect(
+                        colour = 'black',
+                        fill = 'cornflowerblue',
+                        size = 1
+        ),
+        strip.text = element_text(
+                        face = 'bold',
+                        color = 'white'
+        )
+    )
 
 
 
