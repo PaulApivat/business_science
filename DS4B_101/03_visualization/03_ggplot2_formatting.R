@@ -261,6 +261,10 @@ g_area_discrete <- sales_by_year_category_2_tbl %>%
 
 g_area_discrete
 
+
+    
+    
+
 # 5.2 Scale Colors & Fills ----
 # - Awesome way to show variation by groups (discrete) and by values (continuous)
 
@@ -417,5 +421,44 @@ sales_by_year_category_2_tbl %>%
         title = element_text(color = "#084594", face = 'bold')
     )
 
+# Tweet summary take-away
 
+# global aesthetic mapping with continuous variable
+sales_by_year_category_2_tbl %>%
+    ggplot(aes(year, revenue, color=revenue)) +
+    geom_line()
+
+# local aesthetic mapping with continuous variable
+sales_by_year_category_2_tbl %>%
+    ggplot(aes(year, revenue)) +
+    geom_line(aes(color=revenue))
+
+# ERROR ! attempt local non-aesthetic mapping with continuous variable
+sales_by_year_category_2_tbl %>%
+    ggplot(aes(year, revenue)) +
+    geom_line(color=revenue)
+
+# local non-aesthetic mapping with fixed color
+sales_by_year_category_2_tbl %>%
+    ggplot(aes(year, revenue)) +
+    geom_line(color='green')
+
+# global aesthetic mapping with discrete variable
+sales_by_year_category_2_tbl %>%
+    ggplot(aes(year, revenue, color=category_2)) +
+    geom_line()
+
+# local aesthetic mapping with discrete variable
+sales_by_year_category_2_tbl %>%
+    ggplot(aes(year, revenue)) +
+    geom_line(aes(color=category_2))
+
+# ERROR !
+sales_by_year_category_2_tbl %>%
+    ggplot(aes(year, revenue)) +
+    geom_line(color=category_2)
+
+#geom_line(aes(size = year)) +
+geom_line(size = 3)
+#geom_line(color = 'red')
 
