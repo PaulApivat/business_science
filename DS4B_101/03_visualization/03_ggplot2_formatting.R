@@ -199,6 +199,13 @@ sales_by_year_category_2_tbl %>%
 
 # Stacked Bars & Side-By-Side Bars
 
+sales_by_year_category_2_tbl %>%
+    ggplot(aes(year, revenue, fill = category_2)) +
+    # default: position = 'stack'
+    # geom_col(position = 'stack')
+    
+    # position = 'dodge', side-by-side, allows further customization
+    geom_col(position = position_dodge(width = 0.9), color = 'white')
 
 # Stacked Area
 
