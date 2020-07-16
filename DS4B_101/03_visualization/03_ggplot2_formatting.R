@@ -279,16 +279,41 @@ g_facet_continuous +
 
 
 # Color by Category 2 (Discrete Scale)
+RColorBrewer::display.brewer.all()
+RColorBrewer::brewer.pal.info
+RColorBrewer::brewer.pal(n = 8, name = 'Blues')
 
 g_facet_discrete +
     # default palette = 'Blues'
-    scale_color_brewer(palette = 'Blues') +
+    scale_color_brewer(palette = 'Set3') +
     theme_dark()
+
+# tidyquant theme, also discrete
+g_facet_discrete +
+    scale_color_tq(theme = 'dark') +
+    theme_dark()
+
+# viridis theme discrete
+# can do scale_color_viridis_d(option A-thru-E)
+g_facet_discrete +
+    scale_color_viridis_d(option = 'E') +
+    theme_dark()
+
 
 
 # Fill by Category 2
 
- 
+# brewer fill
+g_area_discrete +
+    scale_fill_brewer(palette = 'Set3')
+
+# tidyquant fill
+g_area_discrete +
+    scale_fill_tq()
+
+# viridis fill
+g_area_discrete +
+    scale_fill_viridis_d()
 
 
 # 5.3 Axis Scales ----
