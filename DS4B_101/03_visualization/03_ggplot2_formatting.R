@@ -209,6 +209,9 @@ sales_by_year_category_2_tbl %>%
 
 # Stacked Area
 
+sales_by_year_category_2_tbl %>%
+    ggplot(aes(x=year, y=revenue, fill=category_2)) +
+    geom_area(color = 'black')
 
 
 
@@ -220,25 +223,67 @@ sales_by_year_category_2_tbl %>%
 
 # Plot 1: Faceted Plot, Color = Continuous Scale
 
+# note: revenue is NOT a grouping variable 
+# but can facet_wrap by category_2 for  grouping
+g_facet_continuous <- sales_by_year_category_2_tbl %>%
+    ggplot(aes(year, revenue, color = revenue)) +
+    geom_line(size = 1) +
+    geom_point(size = 3) +
+    facet_wrap(~ category_2, scales = "free_y") +
+    # when doing "free_y", expand_limits allows things to be plotted
+    # in relation to 0
+    expand_limits(y = 0) +
+    theme_minimal()
+
+g_facet_continuous
+
 
 # Plot 2: Faceted Plot, Color = Discrete Scale
 
+g_facet_discrete <- sales_by_year_category_2_tbl %>%
+    ggplot(aes(year, revenue, color = category_2)) +
+    geom_line(size = 1) +
+    geom_point(size = 3) +
+    facet_wrap(~ category_2, scales = "free_y") +
+    # when doing "free_y", expand_limits allows things to be plotted
+    # in relation to 0
+    expand_limits(y = 0) +
+    theme_minimal()
+
+g_facet_discrete
 
 # Plot 3: Stacked Area Plot
 
+g_area_discrete <- sales_by_year_category_2_tbl %>%
+    ggplot(aes(year, revenue, fill = category_2)) +
+    geom_area(color = 'black') +
+    theme_minimal()
 
-
+g_area_discrete
 
 # 5.2 Scale Colors & Fills ----
 # - Awesome way to show variation by groups (discrete) and by values (continuous)
 
 # Color by Revenue (Continuous Scale)
 
-
+g_facet_continuous +
+    
+    #scale_color_continuous(
+    #    low = "black",
+    #    high = "cornflowerblue"
+    #)
+    
+    # direction = -1 reverses the color
+    # option = 'A' is magma (try B-E)
+    scale_color_viridis_c(option = "B", direction = -1)
 
 
 # Color by Category 2 (Discrete Scale)
 
+g_facet_discrete +
+    # default palette = 'Blues'
+    scale_color_brewer(palette = 'Blues') +
+    theme_dark()
 
 
 # Fill by Category 2
