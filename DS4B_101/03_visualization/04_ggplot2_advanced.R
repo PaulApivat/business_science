@@ -17,7 +17,7 @@ glimpse(bike_orderlines_tbl)
 # Question: How much purchasing power is in top 5 customers?
 # Goal: Visualize top N customers in terms of Revenue, include cumulative percentage
 
-n <- 10
+n <- 7
 
 # Data Manipulation
 
@@ -34,9 +34,11 @@ top_customers_tbl <- bike_orderlines_tbl %>%
     
     # Revenue Text
     mutate(revenue_text = scales::dollar(revenue, scale = 1e-6, suffix = 'M')) %>%
+    
     # Cumulative Percent
     mutate(cum_pct = cumsum(revenue)/sum(revenue)) %>%
     mutate(cum_pct_text = scales::percent(cum_pct)) %>%
+    
     # Rank
     mutate(rank = row_number()) %>%
     mutate(rank = case_when(
@@ -50,9 +52,38 @@ top_customers_tbl <- bike_orderlines_tbl %>%
 
 
 # Data Visualization
-
-top_customers_tbl
-
+top_customers_tbl %>%
+    
+    ggplot(aes(x = revenue, y = bikeshop_name)) +
+    
+    geom_segment(aes(xend = 0, yend = bikeshop_name), 
+                 color = palette_light()[1],
+                 size = 1) +
+    geom_point(aes(size = revenue),
+                color = palette_light()[1]) +
+    
+    geom_label(aes(label = label_text), 
+               hjust = "inward",
+               size = 3,
+               color = palette_light()[1]) +
+    
+    # Formatting
+    scale_x_continuous(labels = scales::dollar_format(scale = 1e-6, suffix = 'M')) +
+    labs(
+        title = str_glue("Top {n} Customers"),
+        subtitle = str_glue("Start: {year(min(bike_orderlines_tbl$order_date))}
+                             End:  {year(max(bike_orderlines_tbl$order_date))}"),
+        x = "Revenue ($M)",
+        y = "Customer",
+        caption = str_glue("Top 6 customers contribute
+                           51% of purchasing power.")
+        ) +
+    theme_tq() +
+    theme(
+        legend.position = "none",
+        plot.title = element_text(face = "bold"),
+        plot.caption = element_text(face = "bold.italic")
+    )
 
 
 # 2.0 Heatmaps ----
