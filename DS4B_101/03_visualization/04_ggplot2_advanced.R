@@ -124,7 +124,24 @@ pct_sales_by_customer_tbl %>%
     facet_wrap(~ category_1, scales = "free_x") +
     
     # Formatting
-    scale_fill_gradient(low = "white", high = palette_light()[1]) 
+    scale_fill_gradient(low = "white", high = palette_light()[1]) +
+    labs(
+        title = 'Heatmap of Purchasing Habits',
+        x = 'Bike Type (Category 2)',
+        y = 'Customer',
+        caption = str_glue("Customers that prefer Road: 
+                            Ann Arbor Speed, Austin Cruisers, & Indianapolist Velocipedes
+                            
+                            Customers that prefer Mountain: 
+                            Ithaca Mountain Climbers, Pittsburgh Mountain Machines, & Tampa 29ers")
+    ) +
+    theme_tq() +
+    theme(
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none",
+        plot.caption = element_text(face = 'bold.italic'),
+        plot.title = element_text(face = 'bold')
+    )
 
 
 palette_light()
