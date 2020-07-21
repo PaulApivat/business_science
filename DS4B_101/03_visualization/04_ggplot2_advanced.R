@@ -93,10 +93,39 @@ top_customers_tbl %>%
 # Goal: Visualize heatmap of proportion of sales by Secondary Product Category
 
 # Data Manipulation
+pct_sales_by_customer_tbl <- bike_orderlines_tbl %>% 
+    
+    select(bikeshop_name, category_1, category_2, quantity) %>%
+        
+    group_by(bikeshop_name, category_1, category_2) %>%
+    summarize(total_quantity = sum(quantity)) %>%
+    ungroup() %>%
+    
+    # get proportion / percent
+    group_by(bikeshop_name) %>%
+    mutate(pct = total_quantity / sum(total_quantity)) %>%
+    ungroup() %>%
+    
+    mutate(bikeshop_name = as.factor(bikeshop_name) %>% fct_rev()) %>%
+    mutate(bikeshop_name_num = as.numeric(bikeshop_name))
+
+    
+
 
 
 # Data Visualization
+pct_sales_by_customer_tbl %>%
+    
+    ggplot(aes(x = category_2, y = bikeshop_name)) +
+    
+    # Geometries
+    geom_tile(aes(fill = pct)) +
+    geom_text(aes(label = scales::percent(pct)), size = 3) +
+    facet_wrap(~ category_1, scales = "free_x") +
+    
+    # Formatting
+    scale_fill_gradient(low = "white", high = palette_light()[1]) 
 
 
-
+palette_light()
 
