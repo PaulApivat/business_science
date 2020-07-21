@@ -6,7 +6,7 @@ library(tidyverse)
 library(lubridate)
 library(tidyquant)
 
-bike_orderlines_tbl <- read_rds("00_data/bike_sales/data_wrangled/bike_orderlines.rds")
+bike_orderlines_tbl <- read_rds("../00_data/bike_sales/data_wrangled/bike_orderlines.rds")
 
 glimpse(bike_orderlines_tbl)
 
@@ -21,10 +21,37 @@ n <- 10
 
 # Data Manipulation
 
+top_customers_tbl <- bike_orderlines_tbl %>%
+    select(bikeshop_name, total_price) %>%
+    mutate(bikeshop_name = as.factor(bikeshop_name) %>% fct_lump(n = n, w = total_price)) %>%
+    group_by(bikeshop_name) %>%
+    summarize(revenue = sum(total_price)) %>%
+    ungroup() %>%
+    
+    mutate(bikeshop_name = bikeshop_name %>% fct_reorder(revenue)) %>%
+    mutate(bikeshop_name = bikeshop_name %>% fct_relevel("Other", after = 0)) %>%
+    arrange(desc(bikeshop_name)) %>%
+    
+    # Revenue Text
+    mutate(revenue_text = scales::dollar(revenue, scale = 1e-6, suffix = 'M')) %>%
+    # Cumulative Percent
+    mutate(cum_pct = cumsum(revenue)/sum(revenue)) %>%
+    mutate(cum_pct_text = scales::percent(cum_pct)) %>%
+    # Rank
+    mutate(rank = row_number()) %>%
+    mutate(rank = case_when(
+        rank == max(rank) ~ NA_integer_,
+        TRUE ~ rank 
+    )) %>%
+    
+    # Label Text
+    mutate(label_text = str_glue("Rank: {rank}\nRev: {revenue_text}\nCumPct: {cum_pct_text}"))
+
+
 
 # Data Visualization
 
-
+top_customers_tbl
 
 
 
