@@ -10,7 +10,7 @@ library(tidyquant)
 library(ggrepel)
 library(fs)
 
-bike_orderlines_tbl <- read_rds("00_data/bike_sales/data_wrangled/bike_orderlines.rds")
+bike_orderlines_tbl <- read_rds("../00_data/bike_sales/data_wrangled/bike_orderlines.rds")
 
 glimpse(bike_orderlines_tbl)
 
@@ -24,6 +24,11 @@ glimpse(bike_orderlines_tbl)
 x <- c(0:10, 50, NA_real_)
 x
 
+?mean
+
+mean(x, na.rm = TRUE)
+
+mean(x, na.rm = TRUE, trim = 0.1)
 
 
 # 1.2 Customizing a mean function ----
@@ -39,8 +44,11 @@ mean_remove_na <- function(x, na.rm = TRUE, ...) {
 }
 
 
+mean_remove_na(x)
 
+mean_remove_na(x, na.rm = FALSE)
 
+mean_remove_na(x, trim = 0.1)
 
 
 
@@ -50,10 +58,24 @@ mean_remove_na <- function(x, na.rm = TRUE, ...) {
 # Calculating a 3 month rolling average  for category_1 & category_2 
 # with dates aligned at last day of the month
 
+rolling_avg_3_tbl <- bike_orderlines_tbl %>%
+    select(order_date, category_1, category_2, total_price) %>%
+    mutate(order_date = ymd(order_date)) %>%
+    mutate(month_end = ceiling_date(order_date, unit = "month") - period(1, unit = 'day')) %>%
+    
+    # Grouped Calculation
+    group_by(category_1, category_2, month_end) %>%
+    summarize(
+        total_price = sum(total_price)
+    ) %>%
+    # rolling average PER group
+    mutate(rolling_avg_3 = rollmean(total_price, k = 3, na.pad = TRUE, align = 'right')) %>%
+    ungroup() 
 
-
+rolling_avg_3_tbl
 
 # 2.1 Vector Functions ----
+
 
 
 # 2.2 Data Functions ----
@@ -62,7 +84,7 @@ mean_remove_na <- function(x, na.rm = TRUE, ...) {
 # 3.0 CONTROLLING FLOW: IF STATEMENTS, MESSAGES, WARNINGS, STOP ----
 
 
-# 4.0 VECTORIZED REMOVE OUTLIERS FUNCTION ----
+# 4.0 VECTORIZED DETECT OUTLIERS FUNCTION ----
 #  - Box Plot Diagram to Identify Outliers
 #  - Goal: Use box plot approach to identify outliers
 
@@ -74,15 +96,15 @@ mean_remove_na <- function(x, na.rm = TRUE, ...) {
 
 
 
-# Create remove_outliers()
+# Create detect_outliers()
 
 
 
-# Apply remove_outliers() to bikes_tbl
+# Apply detect_outliers() to bikes_tbl
 
 
 
-# Visualize with remove_outlers()
+# Visualize with detect_outlers()
 
 
 
