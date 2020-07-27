@@ -90,12 +90,53 @@ rolling_avg_3_tbl %>%
 
 # 2.1 Vector Functions ----
 
+# PRO-TIP: Vectorized Functions can be used within mutate() and summarize() functions
+# PRO-TIP: Vectorized Functions first argument is x or ...
 
+?ymd
+?ceiling_date
+?period
+?rollmean
+?sum
 
 # 2.2 Data Functions ----
 
+# PRO-TIP: Data functions are those that take in and output Data Frames
+# PRO-TIP: Data functions' first argument is .data
+
+?select
+?mutate
+?group_by
+?ggplot
+
+
 
 # 3.0 CONTROLLING FLOW: IF STATEMENTS, MESSAGES, WARNINGS, STOP ----
+
+# Create descriptive messages, warnings and errors if user inputting something wrong into the function
+
+class_detect <- function(x){
+    if (is.numeric(x)){
+        message("Value is numeric")
+        print(x)
+    } else if (is.character(x)) {
+        warning("In class_detect(): Value is character! Should be numeric, but can be accepted", call. = FALSE)
+        print(x)
+    } else if (is.logical(x)) {
+        stop("In class_detect(): Value is logical!!! Should be numeric. Definitely cannot be accepted", call. = FALSE)
+        print(x)
+    } else {
+        message("Unknown Class")
+        print(x)
+    }
+}
+
+
+1 %>% class_detect()
+"a" %>% class_detect()
+TRUE %>% class_detect()
+formula(y ~ x) %>% class_detect()
+
 
 
 # 4.0 VECTORIZED DETECT OUTLIERS FUNCTION ----
