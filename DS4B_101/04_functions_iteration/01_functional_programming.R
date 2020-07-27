@@ -70,9 +70,23 @@ rolling_avg_3_tbl <- bike_orderlines_tbl %>%
     ) %>%
     # rolling average PER group
     mutate(rolling_avg_3 = rollmean(total_price, k = 3, na.pad = TRUE, align = 'right')) %>%
-    ungroup() 
+    ungroup() %>%
+    # re-order factor in category_2 based on date (x-axis) and revenue (y-axis)
+    mutate(category_2 = as.factor(category_2) %>% fct_reorder2(month_end, total_price))
 
-rolling_avg_3_tbl
+# use visualization to see what your data looks like
+rolling_avg_3_tbl %>%
+    ggplot(aes(x = month_end, y = total_price, color = category_2)) +
+    # Geometries
+    geom_point() +
+    geom_line(aes(y = rolling_avg_3), color = 'blue', size = 1) + 
+    facet_wrap(~ category_2, scales = 'free_y') +
+    
+    # formatting
+    theme_tq() +
+    # changing scale colors, mapped to 'color'
+    scale_color_tq()
+
 
 # 2.1 Vector Functions ----
 
