@@ -340,7 +340,7 @@ separate_bike_model <- function(data, keep_model_column = TRUE, append = TRUE){
         mutate(model_tier = model %>% str_replace(model_base, replacement = "") %>% str_trim()) %>%
         
         # Remove unnecessary columns
-        select(-matches("[0-9]")) %>%
+        select(-matches("model_[0-9]")) %>%
         
         # Create Flags
         mutate(
@@ -358,7 +358,8 @@ separate_bike_model <- function(data, keep_model_column = TRUE, append = TRUE){
     return(output_tbl)
 }
 
-
+bikes_tbl %>%
+    separate_bike_model(keep_model_column = TRUE, append = TRUE)
 
 
 # 6.0 SAVING AND SOURCING FUNCTIONS ----
