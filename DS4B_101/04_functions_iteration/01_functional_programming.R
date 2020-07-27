@@ -366,14 +366,33 @@ bikes_tbl %>%
 
 # 6.1 Create folder and file ----
 
+path <- "../00_scripts/separate_bikes_and_outlier_detection.R"
 
+fs::file_create(path)
 
 # 6.2 Build and add header ----
+file_header_text <- str_glue(
+"
+# SEPARATE BIKE MODELS AND DETECT OUTLIERS ---- 
+    
+# separate_bikes_models(): A tidy function to separate the model column into engineered features
+    
+# detect_outliers(): A vectorized function that detects outliers using TRUE/FALSE output
+    
+# Libraries ----
+library(tidyverse)
+    
+    
+"
+)
 
-
+write_lines(file_header_text, path = path)
 
 # 6.3 Add functions with dump() ----
 
+c("separate_bike_model", "detect_outliers") %>%
+    dump(file = "../00_scripts/separate_bikes_and_outlier_detection.R",
+         append = TRUE)
 
 
 # 6.4 Source function ----
