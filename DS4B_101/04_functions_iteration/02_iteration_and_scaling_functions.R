@@ -47,42 +47,110 @@ paths_chr %>%
     map(function(x) read_excel(path = x))
 
 
-# Reading Excel Sheets
+# Reading Excel (MULTIPLE) SHEETS
 
-
+excel_sheets("../00_data/bike_sales/data_raw/bikes.xlsx") %>%
+    map(~ read_excel(path = "../00_data/bike_sales/data_raw/bikes.xlsx", sheet = .))
 
 
 # 2.0 MAPPING DATA FRAMES ----
 
 # 2.1 Column-wise Map ----
 
+bike_orderlines_tbl %>% is.list()
+
+# allows greater flexibility
+bike_orderlines_tbl %>%
+    map(~ class(.))
+
+# does not allow flexibility
+bike_orderlines_tbl %>%
+    map(class)
 
 
 
 # 2.2 Map Variants ----
 
+# Character Map: convert map output into a list of characters
+# converting *first* element of each class to named character
+bike_orderlines_tbl %>%
+    map_chr(~ class(.)[1])
 
+# Data Frame Map: convert map output into list
+# converting into a tibble
+bike_orderlines_tbl %>%
+    map_df(~ class(.)[1]) %>%
+    # put into key-value pair
+    gather()
 
+# find length of each column
+bike_orderlines_tbl %>%
+    map_df(~ length(.))
+
+# find percentage of missing values
+# great way to map through a data frame, for each column, see proportion of missing values
+bike_orderlines_tbl %>%
+    map_df(~ sum(is.na(.)) / length(.)) %>%
+    gather()
 
 
 # 2.3 Row-wise Map ----
 
+# MORE common than mapping over column
 
+# BREAKING CHANGE: convert 'excel_paths_tbl' to tibble
+
+# Store all excel tables in a table (instead of a list)
+excel_tbl <- excel_paths_tbl %>%
+    as_tibble() %>%
+    select(path) %>%
+    mutate(data = path %>% map(read_excel))
+
+# list vs tibble
+excel_list  # same as excel_tbl$data
+
+excel_tbl
 
 
 
 # 3.0 NESTED DATA ----
 
 # Unnest
+excel_tbl
 
+excel_tbl$data
+
+# Grabbing each table within the excel list of tibble, one-by-one
+excel_tbl$data[[1]]
+
+excel_tbl$data[[2]]
+
+excel_tbl$data[[3]]
+
+# UNNEST: turns list of 3 tibbles into a Single level data-frame (columns don't match up, bunch of NA values)
+# note: 97 + 30 + 15,644 = 15,771
+# note: 4 + 3 + 7 + path(column) = 15
+
+# NOTE: .id support for unnest() is deprecated, use unnest_legacy() for now
+
+excel_tbl_unnested <- excel_tbl %>%
+    unnest_legacy(data, .id = "ID")
+
+
+excel_tbl_unnested
 
 # Nest
 
+# RE-Nesting Unnested data
+excel_tbl_nested <- excel_tbl_unnested %>%
+    group_by(ID, path) %>%
+    nest()
 
+excel_tbl_nested$data
 
 # Mapping Nested List Columns
 
-
+# note: mapping nested list columns to DROP NA values
 
 
 
