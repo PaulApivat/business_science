@@ -150,7 +150,10 @@ excel_tbl_nested$data
 
 # Mapping Nested List Columns
 
+# Note: create functions that works on 1 element
 # note: mapping nested list columns to DROP NA values
+
+
 
 
 
