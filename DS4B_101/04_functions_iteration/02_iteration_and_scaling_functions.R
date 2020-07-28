@@ -298,7 +298,7 @@ fit_loess_cross_country %>%
 
 
 
-# 4.3 Step1: Function To Return Fitted Results ----
+# 4.3 Step 1: Function To Return Fitted Results ----
 
 ## OBJECTIVE: take rolling_avg_3_tbl sales data, add loess smoother to all category_1, and category_2
 ## at scale - for all groups
@@ -335,20 +335,38 @@ tidy_loess <- function(data, span = 0.2){
 
 
 
-# 4.4 Test Function on Single Element ----
+# 4.4 Step 2: Test Function on Single Element ----
 
 rolling_avg_3_tbl_nested$data[[3]] %>%
     tidy_loess()
 
 
 
-# 4.5 Map Function to All Categories ----
+# 4.5 Step 3: Map Function to All Categories ----
+
+# map over all tibble(s) in the list
 
 # Map Functions
 
+loess_tbl_nested <- rolling_avg_3_tbl_nested %>%
+    mutate(fitted = data %>% map(tidy_loess))
 
+#access .fitted column for first tibble in the list
+loess_tbl_nested$fitted[[1]]
+
+loess_tbl_nested %>%
+    unnest()
 
 # Visualize Results
 
-
+loess_tbl_nested %>%
+    unnest() %>%
+    ggplot(aes(x = month_end, y = total_price, color = category_2)) +
+    
+    # Geometries
+    geom_point() +
+    geom_line(aes(y = .fitted), color = 'blue', size = 2) +
+    geom_smooth(method = 'loess', span = 0.2) +
+    facet_wrap(~ category_2, scales = 'free_y')
+    
 
