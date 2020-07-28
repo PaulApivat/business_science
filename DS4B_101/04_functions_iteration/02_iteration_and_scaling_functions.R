@@ -153,17 +153,56 @@ excel_tbl_nested$data
 # Note: create functions that works on 1 element
 # note: mapping nested list columns to DROP NA values
 
+x <- rep(NA, 5)
+x
+
+# detect if column is NOT ALL NA
+!is.na(x) %>% all()
+
+# detect if column IS ALL NA
+is.na(x) %>% all()
+
+y <- c(1:4, NA_real_)
+y
+
+# False because NOT all values are NA
+is.na(y) %>% all()
+
+# TRUE because NOT all values are NA
+!is.na(y) %>% all()
+
+excel_tbl_nested$data[[3]] %>%
+    # select_if NOT NA, for all of the column
+    select_if(~ !is.na(.) %>% all())
 
 
+# How to Scale with mutate() + map() w/ FUNCTIONS
 
 
+excel_tbl_nested
 
+# Method 1: Creating a function outside of purrr::map()
 
+# STEP 1: Create a function that can be mapped to ONE element
+select_non_na_columns <- function(data){
+    
+    data %>%
+        select_if(~ !is.na(.) %>% all())
+    
+}
 
+# STEP 2: Extract an element, and test the function
+# Newly created function select_non_na_columns works on ONE data table
+excel_tbl_nested$data[[2]] %>%
+    select_non_na_columns()
 
+# STEP 3: Use mutate() + map()
+# Scaling select_non_na_columns function to MORE than one data table
+excel_tbl_nested_fixed <- excel_tbl_nested %>%
+    mutate(data_fixed = data %>% map(select_non_na_columns))
 
-
-
+# select_non_na_columns function successfully drops all NA columns from multiple data tables
+excel_tbl_nested_fixed$data_fixed[[3]]
 
 
 # 4.0 MODELING WITH PURRR ----
