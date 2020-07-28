@@ -298,12 +298,48 @@ fit_loess_cross_country %>%
 
 
 
-# 4.3 Function To Return Fitted Results ----
+# 4.3 Step1: Function To Return Fitted Results ----
 
+## OBJECTIVE: take rolling_avg_3_tbl sales data, add loess smoother to all category_1, and category_2
+## at scale - for all groups
+
+rolling_avg_3_tbl_nested <- rolling_avg_3_tbl %>%
+    group_by(category_1, category_2) %>%
+    # we now have nested dataframe - a dataframe with tibbles in each cell acrsso category_1 and category_2
+    nest()
+
+
+rolling_avg_3_tbl_nested$data[[1]]
+
+## PRO TIP: When making functions, save some testable data as each argument so you can
+## interactively test the function while you build it. 
+
+data <- rolling_avg_3_tbl_nested$data[[1]]
+
+tidy_loess <- function(data, span = 0.2){
+    
+    data_formatted <- data %>%
+        select(month_end, total_price) %>%
+        mutate(month_end_num = as.numeric(month_end))
+    
+    fit_loess <- loess(formula = total_price ~ month_end_num, 
+                       data    = data_formatted, 
+                       span    = span)
+    
+    output_tbl <- fit_loess %>%
+        broom::augment() %>%
+        select(.fitted)
+    
+    return(output_tbl)
+}
 
 
 
 # 4.4 Test Function on Single Element ----
+
+rolling_avg_3_tbl_nested$data[[3]] %>%
+    tidy_loess()
+
 
 
 # 4.5 Map Function to All Categories ----
