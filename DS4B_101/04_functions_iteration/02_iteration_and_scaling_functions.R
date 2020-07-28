@@ -251,18 +251,48 @@ rolling_avg_3_tbl %>%
 
 # Data Preparation
 
+sales_by_m_cross_country_tbl <- rolling_avg_3_tbl %>%
+    filter(category_2 == 'Cross Country Race') %>%
+    select(month_end, total_price) %>%
+    mutate(month_end_num = as.numeric(month_end))
+
+
+sales_by_m_cross_country_tbl %>%
+    ggplot(aes(month_end_num, total_price)) +
+    geom_point() +
+    geom_smooth(method = "loess", span = 0.2, se = FALSE)
+
 
 
 # Making a loess model
+?loess
 
+fit_loess_cross_country <- sales_by_m_cross_country_tbl %>% 
+    # first argument is formula - total_price ~ month_end_num
+    # second argument is the "data" from sales_by_m_cross_country_tbl (note period: '.')
+    # third argument span allows line to fit the points better
+    loess(total_price ~ month_end_num, data = ., span = 0.2)
+
+
+fit_loess_cross_country
 
 
 # Working With Broom
+# to extract information from fit_loess_cross_country
 
+# grab 'fitted' in a data frame using broom library
+fit_loess_cross_country %>%
+    # returns fitted, std error, residuals from the model
+    broom::augment() %>%
+    
+    # Visualizing results
+    ggplot(aes(x = month_end_num, y = total_price)) +
+    geom_point() +
+    geom_line(aes(y = .fitted), color = 'blue')
 
     
     
-# Visualizing results
+
     
 
 
