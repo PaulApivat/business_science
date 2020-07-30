@@ -39,7 +39,12 @@ customer_trends_tbl
 
 # 1.2 Convert to User-Item Format (e.g. Customer-Product) ----
 
-
+customer_product_tbl <- customer_trends_tbl %>%
+    select(bikeshop_name, model, prop_of_total) %>%
+    # User-Item Format with spread() function from tidyr
+    spread(key = model, value = prop_of_total, fill = 0)
+    
+    
 
 
 # 2.0 MODELING: K-MEANS CLUSTERING ----
