@@ -207,6 +207,25 @@ umap_kmeans_4_results_tbl %>%
 
 # 4.0 ANALYZE PURCHASING TRENDS ----
 
+# What are the customers WITHIN the clusters buying?
 
+# instead of bikeshop_name, we want cluster
+
+customer_trends_tbl %>%
+    # Join Cluster Assignment by bikeshop_name
+    left_join(umap_kmeans_4_results_tbl) %>% 
+    mutate(price_bin = case_when(
+        price <= 2240 ~ 'low',
+        price <= 4260 ~ 'medium',
+        TRUE ~ 'high'
+    )) %>% view()
+
+
+# Binning Price (low, med, high)
+# determine low (below 2240), medium (below 4260), high (above 4260)
+customer_trends_tbl %>%
+    pull(price) %>%
+    # low, medium, high
+    quantile(probs = c(0, 0.33, 0.66, 1))
 
 
