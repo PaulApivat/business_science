@@ -45,22 +45,90 @@ customer_product_tbl <- customer_trends_tbl %>%
     spread(key = model, value = prop_of_total, fill = 0)
     
     
-
+customer_product_tbl
 
 # 2.0 MODELING: K-MEANS CLUSTERING ----
 
 # 2.1 Performing K-Means ----
+?kmeans
 
+# NOTE: Because this is unsupervised algorithm, we need to tell how many groups to classify
+
+
+kmeans_obj <- customer_product_tbl %>%
+    select(-bikeshop_name) %>%
+    kmeans(centers = 5, nstart = 100)
+
+kmeans_obj$centers
 
 # 2.2 Tidying a K-Means Object ----
 
+# tidy() functions gives us 'centers' information for K-Means object
+broom::tidy(kmeans_obj) %>% glimpse()
+
+# glance() function gives us summary metrics for the model (total sum sq, total within sum sq, between sum sq and iterations)
+# NOTE: we will use total within sum sq (tot.withinss) to determine what number of clusters to use
+
+broom::glance(kmeans_obj)
+
+broom::augment(kmeans_obj, customer_product_tbl) %>%
+    # .cluster is the cluster assignment that kmeans algo assign
+    select(bikeshop_name, .cluster)
 
 # 2.3 How many centers (customer groups) to use? ----
  
+# STEP 1: Create funcion that can be iterated (make kmeans mapper)
+
+# Function that works on ONE element
+center <- 3
+
+kmeans_mapper <- function(centers = 3){
+    customer_product_tbl %>%
+        select(-bikeshop_name) %>%
+        kmeans(centers = centers, nstart = 100)
+}
+
+# PRO TIP: Test your function on a single iteration (test with centers = 3)
+# this allows us to get total sum of square
+
+3 %>% kmeans_mapper() %>% glance()
+
+# STEP 2: Implement purrr row-wise ( use mutate() + map() )
+# Pro-Tip: Can also apply broom::glance() row-wise with mutate() + map()
+
+# Mapping the function to MANY elements
+
+kmeans_mapped_tbl <- tibble(centers = 1:15) %>%
+    mutate(k_means = centers %>% map(kmeans_mapper)) %>%
+    mutate(glance = k_means %>% map(glance))
+
+# STEP 3: Unnest the glance column
+
+kmeans_mapped_tbl %>%
+    unnest(glance) %>%
+    select(centers, tot.withinss)
+
 
 # 2.4 Skree Plot ----
+# GOAL is Scree Plot: to calculate total within sum of squares (tot.withinss) for many centers
 
-
+kmeans_mapped_tbl %>%
+    unnest(glance) %>%
+    select(centers, tot.withinss) %>%
+    
+    # Visualization
+    ggplot(aes(x = centers, y = tot.withinss)) +
+    geom_point(color = '#2c3e50', size = 4) +
+    geom_line(color = '#2c3e50', size = 1) +
+    ggrepel::geom_label_repel(aes(label = centers), color = '#2c3e50') +
+    
+    # Formatting
+    theme_tq() +
+    labs(
+        title = 'Skree Plot',
+        subtitle = 'Measures the distance that each customer are from the closest K-Means center',
+        caption = 'Conclusion: Based on Skree Plot (elbow), we will select 4 clusters to segment customer base'
+    )
 
 
 # 3.0 VISUALIZATION: UMAP ----
