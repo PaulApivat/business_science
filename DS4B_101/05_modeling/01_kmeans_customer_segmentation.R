@@ -271,4 +271,48 @@ get_cluster_trends(cluster = 3) %>% view()
 # Cluster 4: Low End, Mountain, Aluminum Frame
 get_cluster_trends(cluster = 4) %>% view()
 
+# Update Visualization ----
+
+# create cluster label
+cluster_label_tbl <- tibble(
+    .cluster = 1:4,
+    .cluster_label = c(
+        "Low/Medium Price, Road Model Preferences",
+        "Medium Price, Mountain Model Preference, Alumininum",
+        "High End Price, Road Preference, Carbon",
+        "Low End, Mountain, Aluminum Frame"
+    )
+) %>%
+    # pro-tip: numeric data cannot be directly converted to factor
+    # numeric must be converted to character first before converting to factor
+    mutate(.cluster = as_factor(as.character(.cluster)))
+
+cluster_label_tbl
+
+# left join with cluster_label_tbl
+umap_kmeans_4_results_tbl %>%
+    left_join(cluster_label_tbl)
+
+# add cluster labels via left_join
+umap_kmeans_4_results_tbl %>%
+    left_join(cluster_label_tbl) %>%
+    mutate(label_text = str_glue("Customer: {bikeshop_name}
+                                 Cluster: {.cluster}
+                                 {.cluster_label}")) %>%
+    ggplot(aes(x = x, y = y, color = .cluster)) +
+    
+    # Geometries
+    geom_point() + 
+    geom_label_repel(aes(label = label_text), size = 3) +
+    
+    # Formatting
+    theme_tq() + 
+    scale_color_tq() +
+    labs(
+        title = 'Customer Segmentation: 2D Projection',
+        subtitle = 'UMAP 2D Projection with K-Means Cluster Assignment',
+        caption = 'Conclusion: 4 Customer Segments identified using 2 algorithms'
+    ) +
+    theme(legend.position = 'none')
+
 
