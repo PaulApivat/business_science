@@ -211,21 +211,64 @@ umap_kmeans_4_results_tbl %>%
 
 # instead of bikeshop_name, we want cluster
 
-customer_trends_tbl %>%
-    # Join Cluster Assignment by bikeshop_name
+cluster_trends_tbl <- customer_trends_tbl %>%
+    # Step 1: Join Cluster Assignment by bikeshop_name
     left_join(umap_kmeans_4_results_tbl) %>% 
+    # Step 2a: Assigning Bins
     mutate(price_bin = case_when(
         price <= 2240 ~ 'low',
         price <= 4260 ~ 'medium',
         TRUE ~ 'high'
-    )) %>% view()
+    )) %>% 
+    # Step 3: Select needed columns
+    select(.cluster, model, contains("price"), 
+           category_1:quantity_purchased) %>%
+    
+    # Step 4: Aggregation quantity purchased by cluster and product attributes
+    group_by_at(.vars = vars(.cluster:frame_material)) %>%
+    summarize(total_quantity = sum(quantity_purchased)) %>%
+    ungroup() %>%
+    
+    # Step 5: Normalization - Calculate Proportion of Total
+    group_by(.cluster) %>%
+    mutate(prop_of_total = total_quantity / sum(total_quantity)) %>%
+    ungroup()
+
+cluster_trends_tbl
 
 
-# Binning Price (low, med, high)
+# Step 2: Binning Price (low, med, high)
 # determine low (below 2240), medium (below 4260), high (above 4260)
 customer_trends_tbl %>%
     pull(price) %>%
     # low, medium, high
     quantile(probs = c(0, 0.33, 0.66, 1))
+
+
+# Step 6: Trend Analysis Cluster 1
+
+# Cluster 1 - Low/Medium Price, Road Model Preferences
+cluster_trends_tbl %>%
+    filter(.cluster == 1) %>%
+    arrange(desc(prop_of_total)) %>%
+    mutate(cum_prop = cumsum(prop_of_total)) 
+
+get_cluster_trends <- function(cluster = 1) {
+    
+    cluster_trends_tbl %>%
+        filter(.cluster == cluster) %>%
+        arrange(desc(prop_of_total)) %>%
+        mutate(cum_prop = cumsum(prop_of_total)) 
+    
+}
+
+# Cluster 2: Medium Price, Mountain Model Preference, Alumininum
+get_cluster_trends(cluster = 2) %>% view()
+
+# Cluster 3: High End Price, Road Preference, Carbon
+get_cluster_trends(cluster = 3) %>% view()
+
+# Cluster 4: Low End, Mountain, Aluminum Frame
+get_cluster_trends(cluster = 4) %>% view()
 
 
