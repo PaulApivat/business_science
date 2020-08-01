@@ -409,6 +409,11 @@ First, pull out the K-Means for 10 Centers. Use this since beyond this value the
 ```{r}
 # Get the k_means_obj from the 10th center
 
+k_means_obj_paul_version <- k_means_mapped_tbl_paul %>%
+    filter(centers == 10) %>%
+    pull(k_means) %>%
+    pluck(1)
+
 # Store as k_means_obj
 ```
 
@@ -423,6 +428,14 @@ Next, we'll combine the clusters from the `k_means_obj` with the `umap_results_t
 
 ```{r}
 # Use your dplyr & broom skills to combine the k_means_obj with the umap_results_tbl
+
+umap_kmeans_results_tbl_paul <- k_means_obj_paul_version %>%
+    augment(stock_date_matrix_tbl_paul) %>%
+    select(symbol, .cluster) %>%
+    left_join(umap_results_tbl_paul, by = 'symbol') %>%
+    # left_join the result with the result of another operation
+    left_join((sp_500_index_tbl %>% select(symbol, company, sector)), by = 'symbol')
+
 
 
 # Output: umap_kmeans_results_tbl 
