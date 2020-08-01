@@ -337,6 +337,11 @@ First, let's apply the `umap()` function to the `stock_date_matrix_tbl`, which c
 ```{r}
 # Apply UMAP
 
+umap_results_paul <- stock_date_matrix_tbl_paul %>%
+    select(-symbol) %>%
+    umap()
+
+
 # Store results as: umap_results 
 ```
 
@@ -350,6 +355,13 @@ Next, we want to combine the `layout` from the `umap_results` with the `symbol` 
 ```{r}
 # Convert umap results to tibble with symbols
 
+umap_results_tbl_paul <- umap_results_paul$layout %>% 
+    as_tibble() %>%
+    bind_cols(
+        stock_date_matrix_tbl_paul %>% select(symbol)
+    )
+
+
 # Output: umap_results_tbl
 ```
 
@@ -361,6 +373,13 @@ Finally, let's make a quick visualization of the `umap_results_tbl`.
 
 ```{r}
 # Visualize UMAP results
+
+umap_results_tbl_paul %>%
+    ggplot(aes(x = V1, y = V2)) +
+    geom_point(alpha = 0.5) +
+    theme_tq() +
+    labs(title = 'UMAP Projection')
+
 
 ```
 
