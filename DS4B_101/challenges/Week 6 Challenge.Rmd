@@ -140,6 +140,43 @@ Your first task is to convert to a tibble named `sp_500_daily_returns_tbl` by pe
 
 ```{r}
 # Apply your data transformation skills!
+sp_500_prices_tbl %>% 
+    select(symbol, date, adjusted) %>%
+    filter((date %>% year())==2018) %>%
+    group_by(symbol) %>%
+    mutate(adjusted_lag = lag(adjusted, n = 1)) %>%
+    mutate(adjusted_lag = case_when(
+        is.na(adjusted_lag) ~ adjusted,
+        TRUE ~ adjusted_lag
+    )) %>%
+    mutate(
+        diff_adjusted = adjusted - adjusted_lag,
+        pct_return = diff_adjusted / adjusted_lag
+        ) %>%
+    select(symbol, date, pct_return)
+
+##
+
+sp_500_daily_returns_tbl_paul <- sp_500_prices_tbl %>%
+    select(symbol, date, adjusted) %>%
+    # filter 2018 and onwards
+    filter((date %>% year()) >= 2018) %>% 
+    group_by(symbol) %>%
+    # lag, by default
+    mutate(adjusted_lag = lag(adjusted)) %>%
+    mutate(adjusted_lag = case_when(
+        is.na(adjusted_lag) ~ adjusted,
+        TRUE ~ adjusted_lag
+    )) %>% 
+    mutate(
+        diff_adjusted = adjusted - adjusted_lag,
+        pct_return = diff_adjusted / adjusted_lag
+    ) %>%
+    ungroup() %>%
+    select(symbol, date, pct_return) %>% 
+    filter(date != as.Date("2018-01-02"))
+
+glimpse(sp_500_daily_returns_tbl_paul)
 
 # Output: sp_500_daily_returns_tbl
 ```
