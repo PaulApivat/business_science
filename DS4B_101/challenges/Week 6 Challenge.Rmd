@@ -202,6 +202,9 @@ Now that we have the daily returns (percentage change from one day to the next),
 ```{r}
 # Convert to User-Item Format
 
+stock_date_matrix_tbl_paul <- sp_500_daily_returns_tbl_paul %>%
+    spread(key = date, value = pct_return, fill = 0)
+
 # Output: stock_date_matrix_tbl
 ```
 
@@ -214,6 +217,7 @@ Next, we'll perform __K-Means clustering__.
 We're going to import the correct results first (just in case you were not able to complete the last step).
 ```{r}
 stock_date_matrix_tbl <- read_rds("week_6_data/week_6_data/stock_date_matrix_tbl.rds")
+stock_date_matrix_tbl
 ```
 
 Beginning with the `stock_date_matrix_tbl`, perform the following operations:
