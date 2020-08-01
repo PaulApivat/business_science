@@ -253,11 +253,20 @@ Now that we are familiar with the process for calculating `kmeans()`, let's use 
 We'll use this __custom function__ called `kmeans_mapper()`:
 
 ```{r}
+# original kmeans_mapper function
 kmeans_mapper <- function(center = 3) {
     stock_date_matrix_tbl %>%
         select(-symbol) %>%
         kmeans(centers = center, nstart = 20)
 }
+
+# my own function using stock_date_matrix_tbl_paul
+kmeans_mapper_paul <- function(center = 3) {
+    stock_date_matrix_tbl_paul %>%
+        select(-symbol) %>%
+        kmeans(centers = center, nstart = 20)
+}
+
 ```
 
 Apply the `kmeans_mapper()` and `glance()` functions iteratively using `purrr`.
@@ -270,6 +279,10 @@ Apply the `kmeans_mapper()` and `glance()` functions iteratively using `purrr`.
 
 ```{r}
 # Use purrr to map
+
+k_means_mapped_tbl_paul <- tibble(centers = 1:30) %>%
+    mutate(k_means = centers %>% map(kmeans_mapper_paul)) %>%
+    mutate(glance = k_means %>% map(glance))
 
 
 # Output: k_means_mapped_tbl 
@@ -285,6 +298,20 @@ Next, let's visualize the "tot.withinss" from the glance output as a ___Scree Pl
 ```{r}
 # Visualize Scree Plot
 
+k_means_mapped_tbl_paul %>%
+    unnest(glance) %>%
+    select(centers, tot.withinss) %>%
+    ggplot(aes(x = centers, y = tot.withinss)) +
+    geom_point(color = 'orange', alpha = 0.5, size = 3) +
+    geom_line(color = '#2c3e50') +
+    theme_tq() +
+    labs(
+        title = 'Scree Plot',
+        y = 'Total Within Sum of Squares',
+        x = 'Centers'
+    ) +
+    ggrepel::geom_label_repel(aes(label = centers), size = 3)
+    
 
 
 ```
