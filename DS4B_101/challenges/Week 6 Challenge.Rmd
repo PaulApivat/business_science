@@ -453,6 +453,11 @@ Note - If you've used centers greater than 12, you will need to use a hack to en
 ```{r}
 # Visualize the combined K-Means and UMAP results
 
+umap_kmeans_results_tbl_paul %>%
+    ggplot(aes(x = V1, y = V2, color = .cluster)) +
+    geom_point(alpha = 0.5) +
+    theme_tq() +
+    scale_color_tq()
 
 ```
 
