@@ -229,12 +229,20 @@ Beginning with the `stock_date_matrix_tbl`, perform the following operations:
 ```{r}
 # Create kmeans_obj for 4 centers
 
+kmeans_obj_paul <- stock_date_matrix_tbl_paul %>%
+    select(-symbol) %>%
+    kmeans(centers = 4, nstart = 20)
+
+
 ```
 
 Use `glance()` to get the `tot.withinss`. 
 
 ```{r}
 # Apply glance() to get the tot.withinss
+
+kmeans_obj_paul %>% glance()
+
 
 ```
 
