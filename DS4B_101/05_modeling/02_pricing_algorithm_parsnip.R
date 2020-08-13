@@ -71,8 +71,37 @@ model_sales_tbl %>%
 
 # 2.0 TRAINING & TEST SETS ----
 
+bike_features_tbl <- bike_orderlines_tbl %>%
+    select(price, model, category_2, frame_material) %>%
+    distinct() %>%
+    # add row_number to keep track when split into test & train
+    mutate(id = row_number()) %>%
+    select(id, everything()) %>%
+    separate_bike_model(keep_model_column = TRUE, append = TRUE)
 
+bike_features_tbl
 
+# NOTE: 97 observations is a small sample size
+
+set.seed(seed = 1113)
+# 80% goes into training set, 20% goes into test set
+split_obj <- rsample::initial_split(bike_features_tbl, prop = 0.80, strata = "model_base")
+
+# should have 18 'levels'
+# we want all levels represented in the training set
+split_obj %>% training() %>% distinct(model_base)
+
+split_obj %>% testing() %>% distinct(model_base)
+
+train_tbl <- training(split_obj)
+
+test_tbl <- testing(split_obj)
+
+# quickly examine model_base
+# Pro-Tip: the model_base feature has 18 levels. 
+# A random split may not have all levels in the training set, which is bad.
+# We can try to prevent this by adding model_base as a stratafication variable (strata = )
+bike_features_tbl %>% distinct(model_base)
 
 # 3.0 LINEAR METHODS ----
 ?linear_reg
