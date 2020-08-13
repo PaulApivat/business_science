@@ -53,7 +53,7 @@ model_sales_tbl <- bike_orderlines_tbl %>%
 
 model_sales_tbl %>%
     mutate(category_2 = as_factor(category_2) %>% 
-               fct_reorder(total_sales, .fun = max) %>% 
+                fct_reorder(total_sales, .fun = max) %>% 
                fct_rev()) %>%
     
     ggplot(aes(frame_material, total_sales)) +
