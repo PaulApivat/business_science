@@ -214,7 +214,6 @@ model_02_linear_lm_complex <- linear_reg("regression") %>%
     # price ~ ., means price as a function of ALL predictor columns
     fit(price ~ ., data = train_tbl %>% select(-id, -model, -model_tier))
 
-# 3.2.2 Feature importance ----
 
 model_02_linear_lm_complex %>% calc_metrics(new_data = test_tbl)
 
@@ -225,6 +224,22 @@ model_02_linear_lm_complex %>% calc_metrics(new_data = test_tbl)
 # model_01_linear_lm_simple, features = category_2 + frame_material
 # vs
 # model_02_lienar_lm_complex, features = category_2, frame_material, model_base, black, hi_mod, team, red, ultegra, dura_ace and disc
+
+
+# 3.2.2 Feature importance ----
+
+model_02_linear_lm_complex$fit %>%
+    broom::tidy() %>%
+    arrange(p.value) %>%
+    mutate(term = as.factor(term) %>% fct_rev()) %>%
+    ggplot(aes(x = estimate, y = term)) +
+    geom_point() +
+    ggrepel::geom_label_repel(aes(label = scales::dollar(estimate, accuracy = 1)),
+                              size = 3) +
+    scale_x_continuous(labels = scales::dollar_format()) +
+    labs(title = 'Linear Regression: Feature Importance',
+         subtitle = 'Model 02: Complex lm Model')
+
 
 # 3.3 PENALIZED REGRESSION ----
 
