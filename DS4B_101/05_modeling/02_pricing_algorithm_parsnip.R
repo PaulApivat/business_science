@@ -181,7 +181,27 @@ model_01_linear_lm_simple$fit %>%
 
 # 3.1.3 Function to Calculate Metrics ----
 
+# NOTE: calc_metrics() is a helper function
 
+model_01_linear_lm_simple %>%
+    predict(new_data = test_tbl) %>%
+    # calculate Model Metrics manually
+    # put actual price with predicted price side-by-side w/ bind_cols
+    bind_cols(test_tbl %>% select(price)) %>%
+    # can use this instead of bind_cols, mutate and summarize manually
+    yardstick::metrics(truth = price, estimate = .pred)
+
+calc_metrics <- function(model, new_data = test_tbl) {
+    model %>%
+        predict(new_data = new_data) %>%
+        # calculate Model Metrics manually
+        # put actual price with predicted price side-by-side w/ bind_cols
+        bind_cols(new_data %>% select(price)) %>%
+        # can use this instead of bind_cols, mutate and summarize manually
+        yardstick::metrics(truth = price, estimate = .pred)
+}
+
+model_01_linear_lm_simple %>% calc_metrics(train_tbl)
 
 # 3.2 LINEAR REGRESSION - WITH ENGINEERED FEATURES ----
 
