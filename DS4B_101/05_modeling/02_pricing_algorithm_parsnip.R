@@ -157,6 +157,7 @@ model_01_linear_lm_simple %>%
     # calculate Model Metrics manually
     # put actual price with predicted price side-by-side w/ bind_cols
     bind_cols(test_tbl %>% select(price)) %>%
+    # can use this instead of bind_cols, mutate and summarize manually
     yardstick::metrics(truth = price, estimate = .pred)
 
 
@@ -164,7 +165,19 @@ model_01_linear_lm_simple %>%
 # to get baseline model performance
 
 # 3.1.2 Feature Importance ----
+model_01_linear_lm_simple$fit %>% class()
 
+model_01_linear_lm_simple$fit %>%
+    broom::tidy() %>%
+    arrange(p.value) %>%
+    mutate(term = as.factor(term) %>% fct_rev()) %>%
+    ggplot(aes(x = estimate, y = term)) +
+    geom_point() +
+    ggrepel::geom_label_repel(aes(label = scales::dollar(estimate, accuracy = 1)),
+                              size = 3) +
+    scale_x_continuous(labels = scales::dollar_format()) +
+    labs(title = 'Linear Regression: Feature Importance',
+         subtitle = 'Model 01: Simple lm Model')
 
 # 3.1.3 Function to Calculate Metrics ----
 
