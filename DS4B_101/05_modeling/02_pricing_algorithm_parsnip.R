@@ -243,12 +243,33 @@ model_02_linear_lm_complex$fit %>%
 
 # 3.3 PENALIZED REGRESSION ----
 
+# General interface for Linear Regression Models (IN PARSNIP )
+# three arguments:
+# 1. mode (only possible value for this model is 'regression')
+# 2. penalty - amount of regularization in the model
+# 3. mixture - types of regularization (1 = pure lasso, 0 = ridge regression)
+
 # 3.3.1 Model ----
 ?linear_reg
 ?glmnet::glmnet
 
+# mixture can go from 0 to 1
+# penalty just needs to be non-negative
+model_03_linear_glmnet <- linear_reg(mode = 'regression', penalty = 100, mixture = 0.20) %>%
+    set_engine("glmnet") %>%
+    fit(price ~ ., data = train_tbl %>% select(-id, -model, -model_tier))
 
+# Mean Absolute Error (1086) vs (1130) from previous model_02_linear_complex
+# changing penalty from 10 to 100 improves MAE, slightly, from 1086 to 1040
+# changing mixture from 0.5 to 0.25 improves MAE,slightly from 1040 to 1009
+# changing BOTH penalty & mixture to penalty (100) and mixture (0.20) yields best MAE (1005)
+model_03_linear_glmnet %>% calc_metrics(test_tbl)
 
+# CHANGING penalty and mixture to find the best MAE is Hyper Parameter Tuning
+# systematically adjusting model parameters to optimize the performance
+
+# GRID SEARCH a popular hyper paramter tuning method produces a "grid" that
+# has combinations of parameters
 
 # 3.3.2 Feature Importance ----
 
