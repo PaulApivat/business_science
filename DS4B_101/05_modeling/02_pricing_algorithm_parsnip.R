@@ -150,7 +150,7 @@ model_01_linear_lm_simple %>%
         rmse = mean(residuals^2)^0.5
     )
 
-# simplear way using yardstick() package
+# simpler way using yardstick() package
 
 model_01_linear_lm_simple %>%
     predict(new_data = test_tbl) %>%
@@ -201,16 +201,30 @@ calc_metrics <- function(model, new_data = test_tbl) {
         yardstick::metrics(truth = price, estimate = .pred)
 }
 
-model_01_linear_lm_simple %>% calc_metrics(train_tbl)
+model_01_linear_lm_simple %>% calc_metrics(test_tbl)
 
 # 3.2 LINEAR REGRESSION - WITH ENGINEERED FEATURES ----
 
 # 3.2.1 Model ----
 
+train_tbl
+
+model_02_linear_lm_complex <- linear_reg("regression") %>%
+    set_engine("lm") %>%
+    # price ~ ., means price as a function of ALL predictor columns
+    fit(price ~ ., data = train_tbl %>% select(-id, -model, -model_tier))
 
 # 3.2.2 Feature importance ----
 
+model_02_linear_lm_complex %>% calc_metrics(new_data = test_tbl)
 
+# PRO TIP: The NUMBER ONE WAY TO IMPROVE MODEL PERFORMANCE IS
+# INCLUDE BETTER FEATURES (spend max time here)
+# >>> Advanced models won't help if you don't have good features
+
+# model_01_linear_lm_simple, features = category_2 + frame_material
+# vs
+# model_02_lienar_lm_complex, features = category_2, frame_material, model_base, black, hi_mod, team, red, ultegra, dura_ace and disc
 
 # 3.3 PENALIZED REGRESSION ----
 
