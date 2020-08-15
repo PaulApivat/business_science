@@ -91,6 +91,7 @@ split_obj <- rsample::initial_split(bike_features_tbl, prop = 0.80, strata = "mo
 # we want all levels represented in the training set
 split_obj %>% training() %>% distinct(model_base)
 
+# testing will have 12 'levels
 split_obj %>% testing() %>% distinct(model_base)
 
 train_tbl <- training(split_obj)
@@ -105,13 +106,62 @@ bike_features_tbl %>% distinct(model_base)
 
 # 3.0 LINEAR METHODS ----
 ?linear_reg
+?set_engine
+?fit
+?predict.model_fit
+?metrics
+
+# General interface for Linear Regression Models (IN PARSNIP )
+# three arguments:
+# 1. mode (only possible value for this model is 'regression')
+# 2. penalty - amount of regularization in the model
+# 3. mixture - types of regularization (1 = pure lasso, 0 = ridge regression)
+
+# Engine types: lm, glmnet, stan, spark, keras
 
 
 # 3.1 LINEAR REGRESSION - NO ENGINEERED FEATURES ----
 
+# NOTE: Parsnip API - three steps:
+# 1. Create a model        --> linear_reg()
+# 2. Set an engine         --> set_engine()
+# 3. fit the model to data --> fit()
+
 # 3.1.1 Model ----
+?lm
 
 
+model_01_linear_lm_simple <- linear_reg(mode = "regression") %>%
+    set_engine("lm") %>%
+    # see training_tbl, the actual data to fit the model
+    fit(price ~ category_2 + frame_material, data = train_tbl)
+
+# outputs a 19 x 1 tibble of *predicted* price
+# compare with price column from test_tbl
+model_01_linear_lm_simple %>%
+    predict(new_data = test_tbl) %>%
+    # calculate Model Metrics manually
+    # put actual price with predicted price side-by-side w/ bind_cols
+    bind_cols(test_tbl %>% select(price)) %>%
+    mutate(residuals = price - .pred) %>%
+    # calculate Mean Absolute Error & Root Mean Square Error
+    summarize(
+        mae = abs(residuals) %>% mean(),
+        rmse = mean(residuals^2)^0.5
+    )
+
+# simplear way using yardstick() package
+
+model_01_linear_lm_simple %>%
+    predict(new_data = test_tbl) %>%
+    # calculate Model Metrics manually
+    # put actual price with predicted price side-by-side w/ bind_cols
+    bind_cols(test_tbl %>% select(price)) %>%
+    yardstick::metrics(truth = price, estimate = .pred)
+
+
+# Model Metrics: Calculate model metrics comparing test data predictions with actual values
+# to get baseline model performance
 
 # 3.1.2 Feature Importance ----
 
