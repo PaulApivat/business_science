@@ -273,7 +273,18 @@ model_03_linear_glmnet %>% calc_metrics(test_tbl)
 
 # 3.3.2 Feature Importance ----
 
-
+model_03_linear_glmnet$fit %>%
+    broom::tidy() %>%
+    filter(lambda >= 10 & lambda < 11) %>%
+    arrange(desc(abs(estimate))) %>%
+    mutate(term = as.factor(term) %>% fct_rev()) %>%
+    ggplot(aes(x = estimate, y = term)) +
+    geom_point() +
+    ggrepel::geom_label_repel(aes(label = scales::dollar(estimate, accuracy = 1)),
+                              size = 3) +
+    scale_x_continuous(labels = scales::dollar_format()) +
+    labs(title = 'Linear Regression: Feature Importance',
+         subtitle = 'Model 03: GLMNET Model')
 
 
 # 4.0 TREE-BASED METHODS ----
