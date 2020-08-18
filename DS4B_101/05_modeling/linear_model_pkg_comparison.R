@@ -42,7 +42,8 @@ lambdas_to_try <- 10^seq(-3, 5, length.out = 100)
  
 class(lambdas_to_try)
 
-# Setting Alpha = 0 implements Ridge Regression ----
+# RIDGE REGRESSION ----
+# Setting Alpha = 0 implements Ridge Regression 
 
 ridge_cv <- cv.glmnet(x, y, alpha = 0, lambda = lambdas_to_try, 
           standardize = TRUE, nfolds = 10)
@@ -87,12 +88,62 @@ for (lambda in seq(lambdas_to_try)){
     # Compute hat-matrix and degress of freedom
     ld <- lambdas_to_try[lambda] * diag(ncol(x_scaled))
     H <- x_scaled %*% solve(t(x_scaled) %*% x_scaled + ld) %*% t(x_scaled)
-    ###### ERROR: could not find function tr #######
     df <- tr(H)
     # compute information criteria
     aic[lambda] <- nrow(x_scaled) * log(t(resid) %*% resid) + 2 * df
     bic[lambda] <- nrow(x_scaled) * log(t(resid) %*% resid) + 2 * df * log(nrow(x_scaled))
 }
+
+# Plot information criteria against tried values of lambdas
+
+# AIC: type = 'l' for lambda
+plot(log(lambdas_to_try), aic, col = 'orange', type = 'l',
+     ylim = c(190, 260), ylab = 'Information Criterion')
+
+# BIC line
+lines(log(lambdas_to_try), bic, col = 'skyblue3')
+
+# plot legend
+legend("bottomright", lwd = 1, col = c("orange", "skyblue3"), legend = c("AIC", "BIC"))
+
+# Optimal lambdas according to both criteria
+lambda_aic <- lambdas_to_try[which.min(aic)]
+lambda_bic <- lambdas_to_try[which.min(bic)]
+
+# Fit final models, get their sum of squared residuals and multiple R-squared
+
+# model_aic
+model_aic <- glmnet(x, y, alpha = 0, lambda = lambda_aic, standardize = TRUE)
+y_hat_aic <- predict(model_aic, x)
+ssr_aic <- t(y - y_hat_aic) %*% (y - y_hat_aic)
+rsq_ridge_aic <- cor(y, y_hat_aic)^2
+
+# model_bic
+model_bic <- glmnet(x, y, alpha = 0, lambda = lambda_bic, standardize = TRUE)
+y_hat_bic <- predict(model_bic, x)
+ssr_bic <- t(y - y_hat_bic) %*% (y - y_hat_bic)
+rsq_ridge_bic <- cor(y, y_hat_bic)^2
+
+
+# Note how increasing lambda shrinks the coefficients 
+# Each line shows coefficients for one variable, for different lambdas
+# The higher the lambda, the more the coefficients are shrinked towards zero.
+
+res <- glmnet(x, y, alpha = 0, lambda = lambdas_to_try, standardize = TRUE)
+
+plot(res, xvar = "lambda")
+
+legend("bottomright", lwd = 1, col = 1:6, legend = colnames(x), cex = .7)
+
+
+
+
+
+
+
+
+
+
 
 
 
