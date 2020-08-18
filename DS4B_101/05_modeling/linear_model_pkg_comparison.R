@@ -136,6 +136,49 @@ plot(res, xvar = "lambda")
 legend("bottomright", lwd = 1, col = 1:6, legend = colnames(x), cex = .7)
 
 
+# LASSO REGRESSION ----
+
+# NOTE: re-use glmnet() function but with alpha parameter set to 1
+
+# Setting alpha = 1, implements lasso regression
+lasso_cv <- cv.glmnet(x, y, alpha = 1, lambda = lambdas_to_try,
+                      standardize = TRUE, nfolds = 10)
+
+# PLot cross-validation results
+plot(lasso_cv)
+
+# Best cross-validated lambda
+lambda_cv_2 <- lasso_cv$lambda.min
+
+# Fit final model, get it's sum of squared residuals and multiple R-squared
+model_cv_2 <- glmnet(x, y, alpha = 1, lambda = lambda_cv_2, standardize = TRUE)
+
+y_hat_cv_2 <- predict(model_cv_2, x)
+
+ssr_cv_2 <- t(y - y_hat_cv_2) %*% (y - y_hat_cv_2)
+
+rsq_lasso_cv <- cor(y, y_hat_cv_2)^2
+
+
+# Note how increasing lambda shrinks the coefficients 
+# Each line shows coefficients for one variable, for different lambdas
+# The higher the lambda, the more the coefficients are shrinked towards zero.
+
+res_2 <- glmnet(x, y, alpha = 1, lambda = lambdas_to_try, standardize = TRUE)
+
+plot(res_2, xvar = 'lambda')
+
+legend("bottomright", lwd = 1, col = 1:6, legend = colnames(x), cex = .7)
+
+# RIDGE VS LASSO ----
+
+
+
+
+
+
+
+
 
 
 
