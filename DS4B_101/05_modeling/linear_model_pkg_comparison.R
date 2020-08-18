@@ -32,4 +32,10 @@ class(lambdas_to_try)
 
 # Setting Alpha = 0 implements Ridge Regression ----
 
+ridge_cv <- cv.glmnet(x, y, alpha = 0, lambda = lambdas_to_try, 
+          standardize = TRUE, nfolds = 10)
 
+ridge_cv
+
+# Plot cross-validation results
+plot(ridge_cv)
