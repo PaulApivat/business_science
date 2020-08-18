@@ -2,13 +2,20 @@
 
 # Source: https://www.datacamp.com/community/tutorials/tutorial-ridge-lasso-elastic-net
 
+# Session Info (UPGRADE R 4.0.2)
+R version 4.0.2 (2020-06-22)
+Platform: x86_64-apple-darwin17.0 (64-bit)
+Running under: macOS Catalina 10.15.5
+
 # Load Libraries ----
 
 set.seed(123) # seed for reproducibility
+install.packages('glmnet')
 library(glmnet) # for ridge regression
-library(dplyr) # for data cleaning
+install.packages('tidyverse')
+library(tidyverse) # for data cleaning
 install.packages('mnormt')   # multivariate normal and t-distribution (dependency for psych package)
-
+library(mnormt)
 install.packages('psych')
 library(psych)
 
@@ -86,6 +93,11 @@ for (lambda in seq(lambdas_to_try)){
     aic[lambda] <- nrow(x_scaled) * log(t(resid) %*% resid) + 2 * df
     bic[lambda] <- nrow(x_scaled) * log(t(resid) %*% resid) + 2 * df * log(nrow(x_scaled))
 }
+
+
+
+
+
 
 
 
