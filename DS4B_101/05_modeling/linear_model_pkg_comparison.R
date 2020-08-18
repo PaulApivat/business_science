@@ -20,9 +20,9 @@ x <- mtcars %>%
     select(-mpg) %>%
     as.matrix()
 
-# they are both matrices
-class(x)
-class(y)
+# they are both standardized matrices
+class(x) # all columns, but mpg
+class(y) # mpg column
 
 # Perform 10-fold cross-validation to select lambda ----
 
@@ -39,3 +39,19 @@ ridge_cv
 
 # Plot cross-validation results
 plot(ridge_cv)
+
+# Best cross-validated lambda
+
+lambda_cv <- ridge_cv$lambda.min
+
+# Fit final model, get its sum of squared residuals and multiple R-squared
+
+model_cv <- glmnet(x, y, alpha = 0, lambda = lambda_cv, standardize = TRUE)
+
+y_hat_cv <- predict(model_cv, x)
+
+ssr_cv <- t(y - y_hat_cv) %*% (y - y_hat_cv)
+
+rsq_ridge_cv <- cor(y, y_hat_cv)^2
+
+rsq_ridge_cv
