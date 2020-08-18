@@ -50,8 +50,43 @@ model_cv <- glmnet(x, y, alpha = 0, lambda = lambda_cv, standardize = TRUE)
 
 y_hat_cv <- predict(model_cv, x)
 
+# sum of square residual
 ssr_cv <- t(y - y_hat_cv) %*% (y - y_hat_cv)
 
+# r-square of ridge regression
 rsq_ridge_cv <- cor(y, y_hat_cv)^2
 
 rsq_ridge_cv
+
+# Use Information Criteria to Select Lambda ----
+
+x_scaled <- scale(x)
+aic <- c()
+bic <- c()
+
+## missing psych package: results unpredictable ##
+
+for (lambda in seq(lambdas_to_try)){
+    # Run model (ridge regression)
+    model <- glmnet(x, y, alpha = 0, lambda = lambdas_to_try[lambda], standardize = TRUE)
+    # Extract coefficients and residuals (remove first row for the intercept)
+    betas <- as.vector((as.matrix(coef(model))[-1, ]))
+    resid <- y - (x_scaled %*% betas)
+    # Compute hat-matrix and degress of freedom
+    ld <- lambdas_to_try[lambda] * diag(ncol(x_scaled))
+    H <- x_scaled %*% solve(t(x_scaled) %*% x_scaled + ld) %*% t(x_scaled)
+    ###### ERROR: could not find function tr #######
+    df <- tr(H)
+    # compute information criteria
+    aic[lambda] <- nrow(x_scaled) * log(t(resid) %*% resid) + 2 * df
+    bic[lambda] <- nrow(x_scaled) * log(t(resid) %*% resid) + 2 * df * log(nrow(x_scaled))
+}
+
+
+
+
+
+
+
+
+
