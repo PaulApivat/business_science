@@ -172,7 +172,11 @@ legend("bottomright", lwd = 1, col = 1:6, legend = colnames(x), cex = .7)
 
 # RIDGE VS LASSO ----
 
+# NOTE: skipped rsq_hridge_0001
 
+rsq <- cbind("R-squared" = c(rsq_ridge_cv, rsq_ridge_aic, rsq_ridge_bic, rsq_lasso_cv))
+rownames(rsq) <- c("ridge cross-validated", "ridge AIC", "ridge BIC", "lasso cross_validated")
+print(rsq)
 
 
 
