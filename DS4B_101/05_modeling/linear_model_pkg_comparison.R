@@ -7,6 +7,11 @@
 set.seed(123) # seed for reproducibility
 library(glmnet) # for ridge regression
 library(dplyr) # for data cleaning
+install.packages('mnormt')   # multivariate normal and t-distribution (dependency for psych package)
+
+install.packages('psych')
+library(psych)
+
 
 data('mtcars')
 
