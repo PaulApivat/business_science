@@ -77,7 +77,6 @@ x_scaled <- scale(x)
 aic <- c()
 bic <- c()
 
-## missing psych package: results unpredictable ##
 
 for (lambda in seq(lambdas_to_try)){
     # Run model (ridge regression)
@@ -178,9 +177,29 @@ rsq <- cbind("R-squared" = c(rsq_ridge_cv, rsq_ridge_aic, rsq_ridge_bic, rsq_las
 rownames(rsq) <- c("ridge cross-validated", "ridge AIC", "ridge BIC", "lasso cross_validated")
 print(rsq)
 
+# PRICING ALGORITHM (Bikes) ----
 
+# Steps
+# 1. Read in data (bike_orderlines_tbl)
 
+bike_orderlines_tbl <- read_rds("../00_data/bike_sales/data_wrangled/bike_orderlines.rds")
+glimpse(bike_orderlines_tbl)
 
+# 2. Read documentation for Cross-Validation for glmnet (cv.glmnet)
+
+?cv.glmnet
+
+# 3. Determine predictor(s), x, and response variable (y), in order to set-up ridge regression
+# note simple: price as function of category_2 and frame_material (only)
+# note complex: price as function of every column except a few
+# 4. STANDARDIZE the variables, save as matrices, via scale() and as.matrix() functions
+# 5. Perform 10-fold cross-validation to select lambda
+# 6. Implement Ridge Regression with Cross-Validated Results
+# 7. Plot cross-validated result
+# 8. Find best cross-validated result
+# 9. Fit final model, get its sum of squared residuals and multiple R-squared
+# 10. Get Sum of Squared Residuals
+# 11. Get R-Squared of Ridge Regression
 
 
 
