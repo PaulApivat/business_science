@@ -192,6 +192,15 @@ glimpse(bike_orderlines_tbl)
 # 3. Determine predictor(s), x, and response variable (y), in order to set-up ridge regression
 # note simple: price as function of category_2 and frame_material (only)
 # note complex: price as function of every column except a few
+
+bike_y <- bike_orderlines_tbl %>%
+            select(price) %>%
+            scale(center = TRUE, scale = FALSE) %>%
+            as.matrix()
+
+bike_x <- bike_orderlines_tbl %>%
+            select()
+
 # 4. STANDARDIZE the variables, save as matrices, via scale() and as.matrix() functions
 # 5. Perform 10-fold cross-validation to select lambda
 # 6. Implement Ridge Regression with Cross-Validated Results
@@ -200,13 +209,6 @@ glimpse(bike_orderlines_tbl)
 # 9. Fit final model, get its sum of squared residuals and multiple R-squared
 # 10. Get Sum of Squared Residuals
 # 11. Get R-Squared of Ridge Regression
-
-
-
-
-
-
-
 
 
 
