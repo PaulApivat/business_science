@@ -95,6 +95,8 @@ split_obj <- rsample::initial_split(bike_features_tbl, prop = 0.80, strata = "mo
 
 # should have 18 'levels'
 # we want all levels represented in the training set
+
+
 split_obj %>% training() %>% distinct(model_base)
 
 # testing will have 12 'levels
@@ -305,10 +307,15 @@ model_03_linear_glmnet$fit %>%
 
 # 4.1.2 Decision Tree Plot ----
 
+model_04_tree_decision_tree <- decision_tree(mode = "regression", 
+              cost_complexity = 0.01, 
+              tree_depth      = 5, 
+              min_n           = 10) %>%
+    set_engine("rpart") %>%
+    fit(price ~ ., data = train_tbl %>% select(-id, -model, -model_tier))
 
 
-
-
+model_04_tree_decision_tree %>% calc_metrics(test_tbl)
 
 
 # 4.2 RANDOM FOREST ----
