@@ -303,19 +303,35 @@ model_03_linear_glmnet$fit %>%
 ?decision_tree
 ?rpart::rpart
 
-
-
-# 4.1.2 Decision Tree Plot ----
-
 model_04_tree_decision_tree <- decision_tree(mode = "regression", 
-              cost_complexity = 0.01, 
-              tree_depth      = 5, 
-              min_n           = 10) %>%
+                                             cost_complexity = 0.01, 
+                                             tree_depth      = 5, 
+                                             min_n           = 10) %>%
     set_engine("rpart") %>%
     fit(price ~ ., data = train_tbl %>% select(-id, -model, -model_tier))
 
 
 model_04_tree_decision_tree %>% calc_metrics(test_tbl)
+
+
+# 4.1.2 Decision Tree Plot ----
+
+rpart.plot()
+
+model_04_tree_decision_tree$fit %>%
+    rpart.plot(roundint = FALSE)
+
+
+model_04_tree_decision_tree$fit %>%
+    rpart.plot(
+        roundint = FALSE, 
+        type = 1, 
+        extra = 101, 
+        fallen.leaves = FALSE, 
+        cex = 0.7,
+        main = "Model 04: Decision Tree",
+        box.palette = "Blues")
+
 
 
 # 4.2 RANDOM FOREST ----
