@@ -340,11 +340,11 @@ model_04_tree_decision_tree$fit %>%
 ?rand_forest()
 ?ranger::ranger
 
-
+set.seed(1234)
 model_05_rand_forest_ranger <- rand_forest(
     mode = "regression", mtry = 4, trees = 1000, min_n = 10
     ) %>%
-    set_engine("ranger", splitrule = "extratrees") %>%
+    set_engine("ranger", splitrule = "extratrees", importance = "impurity") %>%
     fit(price ~ ., data = train_tbl %>% select(-id, -model, -model_tier))
 
 
@@ -352,6 +352,18 @@ model_05_rand_forest_ranger %>% calc_metrics(test_tbl)
 
 # 4.2.2 ranger: Feature Importance ----
 
+# ranger::importance() returns the variable importance information
+# make sure to set importance to "impurity" in the seg_engine(), see above.
+
+model_05_rand_forest_ranger$fit %>% 
+    ranger::importance() %>%
+    enframe() %>%
+    arrange(desc(value)) %>%
+    mutate(name = as_factor(name) %>% fct_rev()) %>%
+    ggplot(aes(value, name)) + 
+    geom_point() +
+    labs(title = "ranger: Variable Importance",
+         subtitle = "Model 05: Ranger Random Forest Model")
 
 
 
@@ -359,11 +371,32 @@ model_05_rand_forest_ranger %>% calc_metrics(test_tbl)
 ?rand_forest()
 ?randomForest::randomForest
 
+set.seed(1234)
+model_06_rand_forest_randomForest <- rand_forest("regression") %>%
+    set_engine("randomForest") %>%
+    fit(price ~ ., data = train_tbl %>% select(-id, -model, -model_tier))
+
+## ERROR ##
+model_06_rand_forest_randomForest %>% calc_metrics(test_tbl)
+
 
 
 # 4.2.4 randomForest: Feature Importance ----
 
-
+model_06_rand_forest_randomForest$fit %>%
+    # this is a matrix
+    randomForest::importance() %>%
+    # turns matrix into tibble
+    as_tibble(rownames = "name") %>%
+    arrange(desc(IncNodePurity)) %>%
+    mutate(name = as_factor(name) %>% fct_rev()) %>%
+    
+    ggplot(aes(IncNodePurity, name)) +
+    geom_point() +
+    labs(
+        title = "randomForest: Variable Importance",
+        subtitle = "Model 06: randomForest Model"
+    )
 
 
 # 4.3 XGBOOST ----
