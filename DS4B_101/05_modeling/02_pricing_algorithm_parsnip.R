@@ -13,7 +13,7 @@ pkgs <- c("parsnip", "glmnet", "rpart", "rpart.plot", "ranger", "randomForest", 
 library(readxl)
 library(tidyverse)
 library(tidyquant)
-
+install.packages('tidyquant')
 # Modeling
 library(parsnip)
 
@@ -22,10 +22,16 @@ library(recipes)
 library(rsample)
 
 # Modeling Error Metrics
+install.packages('yardstick')
 library(yardstick)
 
 # Plotting Decision Trees
 library(rpart.plot)
+
+# Libraries / Packages need to be installed after upgrade to R 4.0.2
+install.packages('ggrepel')
+library(ggrepel)
+
 
 # Source Scripts
 source("../00_scripts/separate_bikes_and_outlier_detection.R")
