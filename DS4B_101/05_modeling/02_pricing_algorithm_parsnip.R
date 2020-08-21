@@ -341,6 +341,14 @@ model_04_tree_decision_tree$fit %>%
 ?ranger::ranger
 
 
+model_05_rand_forest_ranger <- rand_forest(
+    mode = "regression", mtry = 4, trees = 1000, min_n = 10
+    ) %>%
+    set_engine("ranger", splitrule = "extratrees") %>%
+    fit(price ~ ., data = train_tbl %>% select(-id, -model, -model_tier))
+
+
+model_05_rand_forest_ranger %>% calc_metrics(test_tbl)
 
 # 4.2.2 ranger: Feature Importance ----
 
