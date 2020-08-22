@@ -418,8 +418,21 @@ model_07_boost_tree_xgboost <- boost_tree(
 model_07_boost_tree_xgboost %>% calc_metrics(test_tbl)
 
 # 4.3.2 Feature Importance ----
+?xgboost::xgb.importance
 
 
+model_07_boost_tree_xgboost$fit %>%
+    xgboost::xgb.importance(model = .) %>%
+    as_tibble() %>%
+    arrange(desc(Gain)) %>%
+    mutate(Feature = as_factor(Feature) %>% fct_rev()) %>%
+    
+    ggplot(aes(Gain, Feature)) +
+    geom_point() +
+    labs(
+        title = "XGBoost: Variable Importance",
+        subtitle = "Model 07: XGBoost Model"
+    )
 
 
 
