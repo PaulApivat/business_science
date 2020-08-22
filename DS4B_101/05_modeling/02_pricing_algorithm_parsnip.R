@@ -438,7 +438,7 @@ model_07_boost_tree_xgboost$fit %>%
 
 # 5.0 TESTING THE ALGORITHMS OUT ----
 
-bike_features_tbl %>%
+g1 <- bike_features_tbl %>%
     mutate(category_2 = as_factor(category_2) %>% 
                fct_reorder(price)) %>%
     
@@ -510,6 +510,15 @@ predictions_new_over_mountain_tbl <- models_tbl %>%
     left_join(new_over_mountain_jekyll, by = "category_2")
 
 predictions_new_over_mountain_tbl
+
+# Update plot
+
+g1 +
+    geom_point(aes(y = .pred), color = "red", alpha = 0.5,
+               data = predictions_new_over_mountain_tbl) +
+    ggrepel::geom_text_repel(aes(label = model_id, y = .pred),
+                             size = 3,
+                             data = predictions_new_over_mountain_tbl)
 
 # 5.2 NEW TRIATHALON MODEL ----
 
