@@ -406,7 +406,16 @@ model_06_rand_forest_randomForest$fit %>%
 ?boost_tree
 ?xgboost::xgboost
 
+set.seed(1234)
+model_07_boost_tree_xgboost <- boost_tree(
+    mode = "regression",
+    learn_rate = 0.15,
+    tree_depth = 6
+    ) %>%
+    set_engine("xgboost") %>%
+    fit(price ~ ., data = train_tbl %>% select(-id, -model, -model_tier))
 
+model_07_boost_tree_xgboost %>% calc_metrics(test_tbl)
 
 # 4.3.2 Feature Importance ----
 
