@@ -303,6 +303,7 @@ model_03_linear_glmnet$fit %>%
 ?decision_tree
 ?rpart::rpart
 
+set.seed(1234)
 model_04_tree_decision_tree <- decision_tree(mode = "regression", 
                                              cost_complexity = 0.01, 
                                              tree_depth      = 5, 
