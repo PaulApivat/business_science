@@ -471,17 +471,45 @@ new_over_mountain_jekyll <- tibble(
     disc       = 0
 ) 
 
+new_over_mountain_jekyll
 
 # Linear Methods ----
 
+predict(model_03_linear_glmnet, new_data = new_over_mountain_jekyll)
 
 
 # Tree-Based Methods ----
 
+predict(model_07_boost_tree_xgboost, new_data = new_over_mountain_jekyll)
 
+# Iteration
 
+# PRO TIP: Data Frames can be a very useful way to keep models organized!
+# Just put them in a 'list-column'
 
+models_tbl <- tibble(
+    model_id = str_c("Model 0", 1:6),
+    model = list(
+        model_01_linear_lm_simple,
+        model_02_linear_lm_complex,
+        model_03_linear_glmnet,
+        model_04_tree_decision_tree,
+        model_05_rand_forest_ranger,
+        model_07_boost_tree_xgboost
+    )
+)
 
+models_tbl
+
+# Add Predictions
+
+predictions_new_over_mountain_tbl <- models_tbl %>%
+    mutate(predictions = map(model, predict, new_data = new_over_mountain_jekyll)) %>%
+    unnest(predictions) %>%
+    mutate(category_2 = "Over Mountain") %>%
+    left_join(new_over_mountain_jekyll, by = "category_2")
+
+predictions_new_over_mountain_tbl
 
 # 5.2 NEW TRIATHALON MODEL ----
 
