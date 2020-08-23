@@ -513,7 +513,7 @@ predictions_new_over_mountain_tbl
 
 # Update plot
 
-g1 +
+g1_over_mtn <- g1 +
     geom_point(aes(y = .pred), color = "red", alpha = 0.5,
                data = predictions_new_over_mountain_tbl) +
     ggrepel::geom_text_repel(aes(label = model_id, y = .pred),
@@ -537,15 +537,41 @@ new_triathalon_slice_tbl <- tibble(
     disc       = 0
 ) 
 
+new_triathalon_slice_tbl
 
 # Linear Methods ----
+
+predict(model_03_linear_glmnet, new_data = new_triathalon_slice_tbl)
+predict(model_02_linear_lm_complex, new_data = new_triathalon_slice_tbl)
+predict(model_01_linear_lm_simple, new_data = new_triathalon_slice_tbl)
 
 
 # Tree-Based Methods ----
 
+predict(model_04_tree_decision_tree, new_data = new_triathalon_slice_tbl)
 
+predict(model_05_rand_forest_ranger, new_data = new_triathalon_slice_tbl)
 
+predict(model_07_boost_tree_xgboost, new_data = new_triathalon_slice_tbl)
 
+# Add Predictions
+
+predictions_new_triathalon_slice_tbl <- models_tbl %>%
+    mutate(predictions = map(model, predict, new_data = new_triathalon_slice_tbl)) %>%
+    unnest(predictions) %>%
+    mutate(category_2 = "Triathalon") %>%
+    left_join(new_triathalon_slice_tbl, by = "category_2")
+
+predictions_new_triathalon_slice_tbl
+
+# Plot
+
+g1_over_mtn +
+    geom_point(aes(y = .pred), color = "red", alpha = 0.5,
+               data = predictions_new_triathalon_slice_tbl) +
+    ggrepel::geom_text_repel(aes(label = model_id, y = .pred),
+                             size = 3,
+                             data = predictions_new_triathalon_slice_tbl)
 
 
 # 6.0 ADDITIONAL ADVANCED CONCEPTS ----
